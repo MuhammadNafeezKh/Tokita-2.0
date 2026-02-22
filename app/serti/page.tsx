@@ -323,7 +323,9 @@ export default function CertificatesPage() {
             {currentData.map((cert, index) => (
               <div
                 key={cert.id}
-                ref={(el) => (cardsRef.current[index] = el)}
+                ref={(el) => {
+                  cardsRef.current[index] = el;
+                }}
                 className="group relative bg-[#232323] border-2 border-[#3A3A3A] shadow-[6px_6px_0px_#1E2C36] rounded-2xl overflow-hidden hover:shadow-[8px_8px_0px_#1E2C36] hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Image Area */}

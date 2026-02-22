@@ -144,8 +144,9 @@ const Skills = () => {
         }
       );
 
-      // ✨ Animasi tiap category card
-      gsap.utils.toArray(".skill-category-card").forEach((card, i) => {
+      // ✨ Animasi tiap category card - DIPERBAIKI dengan type assertion
+      const cards = gsap.utils.toArray(".skill-category-card") as HTMLElement[];
+      cards.forEach((card, i) => {
         gsap.fromTo(
           card,
           { opacity: 0, y: 40, scale: 0.95 },
@@ -165,8 +166,9 @@ const Skills = () => {
         );
       });
 
-      // ✨ Animasi tiap skill badge (stagger)
-      gsap.utils.toArray(".skill-badge").forEach((badge) => {
+      // ✨ Animasi tiap skill badge - DIPERBAIKI dengan type assertion
+      const badges = gsap.utils.toArray(".skill-badge") as HTMLElement[];
+      badges.forEach((badge) => {
         gsap.fromTo(
           badge,
           { opacity: 0, scale: 0.8 },
@@ -184,22 +186,22 @@ const Skills = () => {
         );
       });
 
-      // ✨ Animasi GitHub-style bars
-      gsap.fromTo(
-        ".lang-bar",
-        { width: 0 },
-        {
-          width: (i: number, target: HTMLElement) =>
-            target.getAttribute("data-width"),
-          duration: 1.2,
-          stagger: 0.15,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".lang-overview",
-            start: "top 85%",
-          },
-        }
-      );
+   // ✨ Animasi GitHub-style bars - DIPERBAIKI
+gsap.fromTo(
+  ".lang-bar",
+  { width: 0 },
+  {
+    width: (i: number, target: HTMLElement) => 
+      parseFloat(target.getAttribute("data-width") || "0"),
+    duration: 1.2,
+    stagger: 0.15,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: ".lang-overview",
+      start: "top 85%",
+    },
+  }
+);
     }, sectionRef);
 
     return () => ctx.revert();

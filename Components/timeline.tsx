@@ -184,7 +184,9 @@ const ExperienceTimeline = () => {
               return (
                 <li
                   key={index}
-                  ref={(el) => (itemsRef.current[index] = el)}
+                  ref={(el) => {
+                    itemsRef.current[index] = el;
+                  }}
                   className="group relative flex-shrink-0 w-[380px] md:w-[420px] list-none h-[380px]"
                 >
                   {/* Container untuk kartu - diposisikan absolut: atas atau bawah */}

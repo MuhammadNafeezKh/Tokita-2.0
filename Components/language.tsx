@@ -168,7 +168,9 @@ const LanguagesSection = () => {
                 </div>
                 
                 <span 
-                  ref={(el) => (percentRefs.current[index] = el)}
+                  ref={(el) => {
+                    percentRefs.current[index] = el;
+                  }}
                   className="text-xs font-bold text-white bg-[#2C2C2C] px-2.5 py-1 rounded-full border border-[#4A6B7F] font-mono min-w-[3rem] text-center drop-shadow-[2px_2px_0px_#000000]"
                 >
                   0%

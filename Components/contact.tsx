@@ -22,7 +22,7 @@ type Particle = {
 
 const ContactSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | HTMLAnchorElement | null)[]>([]);
   const [copied, setCopied] = useState(false);
   
   // ✅ State untuk menyimpan posisi partikel (client-side only)
@@ -212,7 +212,9 @@ const ContactSection = () => {
             return (
               <a
                 key={index}
-                ref={(el) => (cardRefs.current[index] = el)}
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
                 href={method.action}
                 target={method.external ? "_blank" : undefined}
                 rel={method.external ? "noopener noreferrer" : undefined}
@@ -255,7 +257,9 @@ const ContactSection = () => {
 
         {/* Email Copy Section - OMORI style */}
         <div 
-          ref={(el) => (cardRefs.current[contactMethods.length] = el)}
+          ref={(el) => {
+            cardRefs.current[contactMethods.length] = el;
+          }}
           className="bg-[#232323] border-2 border-[#3A3A3A] shadow-[6px_6px_0px_#1E2C36] rounded-2xl p-6 
             flex flex-col sm:flex-row items-center justify-between gap-4 hover:shadow-[8px_8px_0px_#1E2C36] transition-all duration-300"
         >
