@@ -15,36 +15,18 @@ import EducationTimeline from "@/Components/timeline";
 import ContactSection from "@/Components/contact";
 import CustomCursor from "@/Components/cursor"
 import Footer from "@/Components/footer";
-import DepressedIntro from "@/Components/DepressedIntro";
 import MariaTourGuide from "@/Components/miranda";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const [showMainContent, setShowMainContent] = useState(false);
-  const [isReturning, setIsReturning] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [showAudioPrompt, setShowAudioPrompt] = useState(true);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   
   // Refs untuk audio
   const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    const returningFromCert = sessionStorage.getItem('returnFromCert') === 'true';
-    const returningFromBlog = sessionStorage.getItem('returnFromBlog') === 'true';
-    
-    if (returningFromCert || returningFromBlog) {
-      setIsReturning(true);
-      setShowMainContent(true);
-      
-      sessionStorage.removeItem('returnFromCert');
-      sessionStorage.removeItem('returnFromBlog');
-    } else {
-      setShowMainContent(false);
-    }
-  }, []);
 
   // Init Audio Context untuk RBD sound
   const initAudioContext = async () => {
@@ -63,7 +45,7 @@ export default function Home() {
       if (!bgmAudioRef.current) {
         bgmAudioRef.current = new Audio('/audio/Background.mp3');
         bgmAudioRef.current.loop = true;
-        bgmAudioRef.current.volume = 0.15; // Volume rendah untuk background
+        bgmAudioRef.current.volume = 0.15;
       }
       
       bgmAudioRef.current.play()
@@ -86,7 +68,7 @@ export default function Home() {
     setAudioEnabled(false);
   };
 
-  // Play RBD Sound Effect (pake AudioContext biar bisa dimix dengan BGM)
+  // Play RBD Sound Effect
   const playRBDSound = async () => {
     try {
       const ctx = await initAudioContext();
@@ -95,30 +77,24 @@ export default function Home() {
         await ctx.resume();
       }
       
-      // Fetch dan decode file MP3
       const response = await fetch('/audio/RBD.mp3');
       const arrayBuffer = await response.arrayBuffer();
       const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
       
-      // Buat source node
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
       
-      // Buat gain node untuk kontrol volume
       const gainNode = ctx.createGain();
-      gainNode.gain.setValueAtTime(0.4, ctx.currentTime); // Volume 40%
+      gainNode.gain.setValueAtTime(0.4, ctx.currentTime);
       
-      // Connect: source -> gain -> destination
       source.connect(gainNode);
       gainNode.connect(ctx.destination);
       
-      // Play
       source.start();
       
     } catch (e) {
       console.log("RBD Sound Error:", e);
       
-      // Fallback: pake Audio element biasa
       try {
         const fallbackAudio = new Audio('/audio/RBD.mp3');
         fallbackAudio.volume = 0.4;
@@ -129,86 +105,88 @@ export default function Home() {
     }
   };
 
-  // Handle user interaction pertama
-  const handleUserInteraction = async () => {
-    setShowAudioPrompt(false);
+  // Function to start audio on first user interaction
+  const startAudio = async () => {
+    if (hasUserInteracted) return;
     
-    // Init AudioContext harus dari user interaction
-    const ctx = await initAudioContext();
-    if (ctx.state === 'suspended') {
-      await ctx.resume();
+    setHasUserInteracted(true);
+    
+    try {
+      const ctx = await initAudioContext();
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      playBGM();
+    } catch (error) {
+      console.log("Audio start failed:", error);
     }
-    
-    playBGM();
   };
 
   useEffect(() => {
-    if (showMainContent) {
-      ScrollTrigger.refresh();
-      
-      if (isReturning && heroRef.current) {
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          setIsReturning(false);
-        }, 100);
-      }
-      
-      // Pasang event listener untuk klik di seluruh halaman
-      const handleDocumentClick = (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        
-        // Cek apakah yang diklik adalah link atau button
-        if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')) {
-          // Random chance 30% untuk suara RBD
-          if (Math.random() < 0.3) {
-            playRBDSound();
-          }
-          // Kalo gak dapet RBD, gak usah sound apa-apa (biar lebih dramatic)
-        }
-      };
-      
-      document.addEventListener('click', handleDocumentClick);
-      
-      return () => {
-        document.removeEventListener('click', handleDocumentClick);
-        stopBGM();
-        
-        // Cleanup AudioContext
-        if (audioContextRef.current) {
-          audioContextRef.current.close();
-        }
-      };
+    ScrollTrigger.refresh();
+    
+    if (heroRef.current) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
-  }, [showMainContent, isReturning]);
-
-  const handleIntroComplete = () => {
-    setShowMainContent(true);
-  };
-
-  if (!showMainContent) {
-    return <DepressedIntro onEnter={handleIntroComplete} />;
-  }
+    
+    // Add global click listener to start audio on first click anywhere
+    const handleFirstInteraction = () => {
+      startAudio();
+      // Remove listener after first interaction
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+    };
+    
+    // Also listen for keydown (for keyboard users)
+    const handleFirstKeyDown = () => {
+      startAudio();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstKeyDown);
+    };
+    
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('keydown', handleFirstKeyDown);
+    
+    // Pasang event listener untuk RBD sound setelah audio aktif
+    const handleDocumentClick = (e: MouseEvent) => {
+      if (!hasUserInteracted) return;
+      
+      const target = e.target as HTMLElement;
+      
+      if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')) {
+        if (Math.random() < 0.3) {
+          playRBDSound();
+        }
+      }
+    };
+    
+    document.addEventListener('click', handleDocumentClick);
+    
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstKeyDown);
+      document.removeEventListener('click', handleDocumentClick);
+      stopBGM();
+      
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, [hasUserInteracted]);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      {/* Audio Permission Prompt */}
-      {showAudioPrompt && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#1a0f0f] border-2 border-[#8B0000] p-8 max-w-md mx-4 text-center">
-            <h2 className="text-[#8B0000] text-xl font-mono mb-4">ENABLE AUDIO?</h2>
-            <p className="text-gray-300 text-sm mb-6">
-              Pengalaman ini menggunakan audio untuk menciptakan suasana yang lebih immersive.
-            </p>
-            <button
-              onClick={handleUserInteraction}
-              className="px-8 py-3 border-2 border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000] hover:text-white transition-all duration-500 font-mono"
-            >
-              AKTIFKAN AUDIO
-            </button>
+      {/* Simple overlay hint - will disappear on first click */}
+      {!hasUserInteracted && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+          <div className="bg-black/50 backdrop-blur-sm px-6 py-3 rounded-full animate-pulse">
+            <p className="text-white text-sm font-mono">✨ Klik di mana saja untuk memulai ✨</p>
           </div>
         </div>
       )}
-
+      
       {/* Audio Controls */}
       <div className="fixed bottom-6 right-6 z-50 flex gap-2">
         <button

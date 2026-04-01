@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,13 +17,12 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [glitchEffect, setGlitchEffect] = useState(false);
   const [whisperText, setWhisperText] = useState("");
+  const [currentImage, setCurrentImage] = useState("/maria/4.png");
   const mariaRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const shadowRef = useRef<HTMLDivElement>(null);
-  const eyesRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
-  // Tour steps - Maria sebagai teman sekaligus entitas gelap
   const tourSteps = [
     {
       target: "hero",
@@ -64,21 +64,23 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
   // Efek glitch acak
   useEffect(() => {
     const glitchInterval = setInterval(() => {
-      if (Math.random() > 0.7) {
+      if (Math.random() > 0.7 && !glitchEffect) {
         setGlitchEffect(true);
+        setCurrentImage("/maria/2.png");
         
-        // Efek mata berubah
-        if (eyesRef.current) {
-          gsap.to(eyesRef.current, {
-            scale: 1.2,
+        if (imageContainerRef.current) {
+          gsap.to(imageContainerRef.current, {
+            scale: 1.05,
             duration: 0.1,
             yoyo: true,
             repeat: 2,
-            onComplete: () => setGlitchEffect(false)
+            onComplete: () => {
+              setGlitchEffect(false);
+              setCurrentImage("/maria/4.png");
+            }
           });
         }
         
-        // Bisikan acak
         const whispers = [
           "jangan tinggalkan aku...",
           "mereka tidak mengerti...",
@@ -92,14 +94,13 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
     }, 8000);
 
     return () => clearInterval(glitchInterval);
-  }, []);
+  }, [glitchEffect]);
 
-  // Animasi muncul dengan nuansa horor
+  // Animasi muncul
   useEffect(() => {
     if (!mariaRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Animasi masuk dari bayangan
       gsap.fromTo(mariaRef.current,
         { x: -200, opacity: 0, scale: 0.5, filter: "blur(10px)" },
         { 
@@ -110,10 +111,8 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
           duration: 2, 
           ease: "power3.out",
           onComplete: () => {
-            // Animasi floating tidak stabil (seperti entitas)
             gsap.to(mariaRef.current, {
               y: -3,
-              rotation: 0.5,
               duration: 3,
               repeat: -1,
               yoyo: true,
@@ -122,26 +121,6 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
           }
         }
       );
-
-      // Animasi bayangan hidup
-      gsap.to(shadowRef.current, {
-        scale: 1.1,
-        opacity: 0.3,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-
-      // Animasi rambut seperti bergerak sendiri
-      gsap.to(".maria-hair", {
-        rotation: 3,
-        x: 2,
-        duration: 4,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
     }, mariaRef);
 
     return () => ctx.revert();
@@ -162,11 +141,13 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
             if (currentStep !== i) {
               setCurrentStep(i);
               
-              // Efek glitch saat ganti step
               setGlitchEffect(true);
-              setTimeout(() => setGlitchEffect(false), 300);
+              setCurrentImage("/maria/2.png");
+              setTimeout(() => {
+                setGlitchEffect(false);
+                setCurrentImage("/maria/4.png");
+              }, 300);
               
-              // Animasi dialog
               if (dialogRef.current) {
                 gsap.to(dialogRef.current, {
                   scale: 1.05,
@@ -176,10 +157,9 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
                 });
               }
               
-              // Mata berkedip tidak normal
-              if (eyesRef.current) {
-                gsap.to(eyesRef.current, {
-                  scaleY: 0.1,
+              if (imageContainerRef.current) {
+                gsap.to(imageContainerRef.current, {
+                  scale: 1.05,
                   duration: 0.1,
                   yoyo: true,
                   repeat: 2
@@ -211,7 +191,6 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
       setCurrentStep(prev => prev + 1);
       scrollToTarget(tourSteps[currentStep + 1].target);
       
-      // Efek bisikan
       setWhisperText("kau yakin?");
       setTimeout(() => setWhisperText(""), 1000);
     }
@@ -259,7 +238,7 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
         </div>
       )}
 
-      {/* Karakter Maria - Teman sekaligus Entitas Gelap */}
+      {/* Karakter Maria */}
       <div 
         ref={mariaRef}
         className={`absolute left-4 bottom-4 flex flex-col items-start gap-3 pointer-events-auto max-w-[320px] transition-all duration-300 ${
@@ -269,67 +248,37 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
           filter: glitchEffect ? 'hue-rotate(90deg) brightness(1.2)' : 'none'
         }}
       >
-        {/* Bayangan hidup */}
+        {/* Gambar Maria - Dengan teknik penghilangan background */}
         <div 
-          ref={shadowRef}
-          className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-black/50 blur-xl rounded-full"
-        />
-
-        {/* Karakter Visual Maria */}
-        <div className="relative group">
-          {/* Siluet Maria dengan elemen horor */}
-          <div className="w-28 h-36 bg-gradient-to-t from-[#1a0f1a] via-[#2a1a2a] to-[#3a1f3a] rounded-t-full relative shadow-[0_10px_30px_rgba(139,0,0,0.3)]">
-            {/* Rambut panjang yang seperti bergerak sendiri */}
-            <div className="maria-hair absolute -top-14 left-1/2 -translate-x-1/2 w-20 h-20">
-              <div className="absolute top-0 left-0 w-10 h-16 bg-[#1a0a1a] rounded-t-full transform -rotate-12 origin-top animate-hair" />
-              <div className="absolute top-0 right-0 w-10 h-16 bg-[#1a0a1a] rounded-t-full transform rotate-12 origin-top animate-hair-delay" />
-            </div>
-            
-            {/* Kepala dengan mata yang "hidup" */}
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#3a1f3a] rounded-full border-2 border-[#8B0000]/40">
-              {/* Mata - kadang berubah jadi hitam semua */}
-              <div ref={eyesRef} className="absolute inset-0">
-                <div className="absolute top-4 left-3">
-                  <div className={`w-3 h-3 ${glitchEffect ? 'bg-red-900' : 'bg-black'} rounded-full overflow-hidden`}>
-                    <div className="w-1 h-3 bg-red-900/40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                  </div>
-                </div>
-                
-                <div className="absolute top-4 right-3">
-                  <div className={`w-3 h-3 ${glitchEffect ? 'bg-red-900' : 'bg-black'} rounded-full overflow-hidden`}>
-                    <div className="w-1 h-3 bg-red-900/40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Senyuman yang kadang melengkung tidak wajar */}
-              <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-1 ${
-                glitchEffect ? 'bg-red-900/60' : 'bg-[#8B5F7F]/40'
-              } rounded-full`} />
-              
-              {/* Air mata darah (kadang muncul) */}
-              {glitchEffect && (
-                <>
-                  <div className="absolute -bottom-1 left-3 w-0.5 h-4 bg-red-900/60 rotate-12" />
-                  <div className="absolute -bottom-1 right-3 w-0.5 h-4 bg-red-900/60 -rotate-12" />
-                </>
-              )}
-            </div>
-            
-            {/* Gaun dengan bayangan aneh */}
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-20 h-24 bg-gradient-to-b from-[#2a1a2a] to-[#0a0a1a] rounded-t-full">
-              {/* Tangan yang kadang terlihat menjulur */}
-              <div className="absolute -left-4 top-12 w-4 h-12 bg-[#2a1a2a]/30 rounded-l-full transform -rotate-12 animate-hand" />
-              <div className="absolute -right-4 top-12 w-4 h-12 bg-[#2a1a2a]/30 rounded-r-full transform rotate-12 animate-hand-delay" />
-            </div>
-            
-            {/* Luka-luka yang muncul samar */}
-            <div className="absolute top-16 left-1/4 w-1 h-8 bg-red-900/20 rotate-12" />
-            <div className="absolute top-16 right-1/4 w-1 h-8 bg-red-900/20 -rotate-12" />
+          ref={imageContainerRef}
+          className="relative"
+        >
+          {/* Menggunakan mix-blend-mode untuk menghilangkan background putih */}
+          <div className="relative w-[140px] h-[140px]">
+            <Image
+              src={currentImage}
+              alt="Maria"
+              fill
+              className={`object-contain transition-all duration-200 ${
+                !glitchEffect ? 'grayscale' : 'grayscale-0'
+              }`}
+              style={{
+                filter: glitchEffect 
+                  ? 'contrast(1.5) brightness(1.2) hue-rotate(90deg)' 
+                  : 'contrast(1.2) brightness(0.7)',
+                mixBlendMode: 'multiply' // Menghilangkan background putih
+              }}
+              priority
+            />
           </div>
           
-          {/* Lingkaran cahaya merah (seperti portal) */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-32 h-8 bg-red-900/20 blur-2xl rounded-full animate-pulse" />
+          {/* Overlay glitch effect */}
+          {glitchEffect && (
+            <>
+              <div className="absolute inset-0 bg-red-900/30 mix-blend-overlay animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-900/20 to-transparent animate-glitch-scan" />
+            </>
+          )}
         </div>
 
         {/* Dialog Bubble */}
@@ -339,18 +288,17 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
             glitchEffect ? 'border-red-900/60' : 'border-[#8B0000]/30'
           } rounded-2xl p-5 ml-4 shadow-[0_10px_30px_rgba(139,0,0,0.3)] w-full backdrop-blur-sm`}
         >
-          {/* Triangle pointer - berubah warna saat glitch */}
+          {/* Triangle pointer */}
           <div className={`absolute -left-3 bottom-6 w-0 h-0 border-t-8 border-t-transparent border-r-8 ${
             glitchEffect ? 'border-r-red-900/60' : 'border-r-[#0a0a1a]'
           } border-b-8 border-b-transparent`} />
           
-          {/* Nama karakter dengan efek berkedip */}
+          {/* Nama karakter */}
           <div className="flex items-center gap-2 mb-3">
             <span className={`${glitchEffect ? 'text-red-900' : 'text-[#8B5F7F]'} text-sm font-mono tracking-wider`}>
               MARIA
             </span>
             <span className="text-red-900/40 text-[8px] italic">{tourSteps[currentStep].emotion}</span>
-            {/* Simbol yang berubah */}
             <div className={`ml-auto w-3 h-3 ${glitchEffect ? 'text-red-900' : 'text-[#8B5F7F]/30'}`}>
               {glitchEffect ? '⚠' : '✦'}
             </div>
@@ -361,12 +309,12 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
             {tourSteps[currentStep].message}
           </p>
           
-          {/* Bisikan di bawah pesan */}
+          {/* Bisikan */}
           <p className="text-red-900/30 text-[10px] mb-4 italic font-mono">
             &quot;{tourSteps[currentStep].whisper}&quot;
           </p>
           
-          {/* Progress dots dengan efek denyut */}
+          {/* Progress dots */}
           <div className="flex gap-1.5 mb-4">
             {tourSteps.map((_, index) => (
               <div 
@@ -447,33 +395,12 @@ const MariaTourGuide = ({ onClose }: TourGuideProps) => {
         .animate-whisper {
           animation: whisper 2s ease-in-out forwards;
         }
-        @keyframes hairMove {
-          0%, 100% { transform: rotate(-12deg) translateY(0); }
-          50% { transform: rotate(-15deg) translateY(-2px); }
+        @keyframes glitchScan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
-        .animate-hair {
-          animation: hairMove 3s ease-in-out infinite;
-        }
-        @keyframes hairMoveDelay {
-          0%, 100% { transform: rotate(12deg) translateY(0); }
-          50% { transform: rotate(15deg) translateY(-2px); }
-        }
-        .animate-hair-delay {
-          animation: hairMoveDelay 3s ease-in-out infinite;
-        }
-        @keyframes handMove {
-          0%, 100% { transform: rotate(-12deg) translateX(0); }
-          50% { transform: rotate(-15deg) translateX(-2px); }
-        }
-        .animate-hand {
-          animation: handMove 4s ease-in-out infinite;
-        }
-        @keyframes handMoveDelay {
-          0%, 100% { transform: rotate(12deg) translateX(0); }
-          50% { transform: rotate(15deg) translateX(2px); }
-        }
-        .animate-hand-delay {
-          animation: handMoveDelay 4s ease-in-out infinite;
+        .animate-glitch-scan {
+          animation: glitchScan 0.5s ease-in-out;
         }
       `}</style>
     </div>

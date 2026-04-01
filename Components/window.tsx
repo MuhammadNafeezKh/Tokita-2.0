@@ -23,7 +23,6 @@ const Window = () => {
         },
       });
 
-      // ✨ Window 1: Kehidupan Loop (kiri-atas)
       tl.fromTo(
         ".window-1",
         { opacity: 0, x: -20, y: 30, scale: 0.98 },
@@ -41,7 +40,6 @@ const Window = () => {
         "-=0.5"
       )
 
-      // ✨ Window 2: Ubur-ubur (kanan-bawah)
       .fromTo(
         ".window-2",
         { opacity: 0, x: 20, y: -30, scale: 0.98 },
@@ -60,7 +58,6 @@ const Window = () => {
         "-=0.5"
       );
 
-      // ✨ Floating animation - lebih halus
       gsap.to(".window-1", {
         y: -4,
         x: -2,
@@ -79,7 +76,6 @@ const Window = () => {
         delay: 1,
       });
 
-      // ✨ Fade out saat scroll lanjut
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top 0%",
@@ -112,13 +108,13 @@ const Window = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen py-40 px-4 overflow-visible"
+      className="relative min-h-screen py-20 px-3 overflow-visible"
       aria-hidden="true"
     >
-      {/* Background gradient - light theme subtle */}
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#e6f0fa]/30 to-transparent pointer-events-none" />
       
-      {/* Subtle grid - light */}
+      {/* Subtle grid */}
       <div 
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -130,205 +126,285 @@ const Window = () => {
         }}
       />
 
-      {/* ✨ WINDOW 1: Kehidupan Loop (Kiri-Atas) - RESPONSIVE */}
-      <div className="window-1 absolute left-1/2 -translate-x-1/2 md:left-[12%] md:-translate-x-0 xl:left-[17%] top-[5%] md:top-[10%] w-[85vw] sm:w-[480px] md:w-[520px] lg:w-[620px] xl:w-[720px] z-10">
-        <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-xl shadow-gray-200/50 w-full">
-          {/* Header - Responsive */}
-          <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 bg-[#f3f3f3] border-b border-[#e0e0e0]">
-            <div className="flex gap-1 sm:gap-2">
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ff5f56]" />
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ffbd2e]" />
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#27c93f]" />
+      {/* WINDOW 1: Malam Putih - MOBILE FIRST */}
+      <div className="window-1 absolute left-1/2 -translate-x-1/2 top-[5%] w-[95vw] max-w-[400px] sm:max-w-[450px] md:w-[480px] md:left-[10%] md:-translate-x-0 lg:left-[12%] xl:left-[15%] md:top-[15%] z-10">
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-lg shadow-gray-200/50 w-full">
+          {/* Header - Mobile compact */}
+          <div className="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+            <div className="flex gap-1">
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ff5f56]" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ffbd2e]" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#27c93f]" />
             </div>
-            <span className="ml-2 sm:ml-3 text-[10px] sm:text-xs text-gray-500 font-mono truncate">hidup.tsx</span>
-            <div className="ml-auto flex items-center gap-1 sm:gap-2">
-              <span className="text-[8px] sm:text-xs text-gray-400 hidden xs:inline">TypeScript React</span>
-            </div>
-          </div>
-
-          {/* Code Content - Responsive dengan overflow scroll untuk mobile */}
-          <pre className="p-3 sm:p-4 md:p-6 font-mono text-[10px] sm:text-xs md:text-sm lg:text-base text-gray-800 leading-relaxed sm:leading-loose overflow-x-auto whitespace-pre bg-white">
-            <code className="block min-w-[300px] sm:min-w-0">
-              <span className="code-line block text-[#008000]">
-                <span className="text-[#0000ff]">//</span> kehidupan adalah loop tanpa break;
-              </span>
-
-              <span className="code-line block mt-2 sm:mt-4">
-                <span className="text-[#0000ff]">const</span>{" "}
-                <span className="text-[#001080] font-semibold">hidup</span>{" "}
-                <span className="text-gray-800">=</span>{" "}
-                <span className="text-[#0000ff]">async</span>{" "}
-                <span className="text-gray-800">()</span>{" "}
-                <span className="text-gray-800">=&gt;</span>{" "}
-                <span className="text-gray-800">{"{"}</span>
-              </span>
-
-              <span className="code-line block pl-2 sm:pl-5 mt-2 sm:mt-4">
-                <span className="text-[#0000ff]">await</span>{" "}
-                <span className="text-[#001080] font-semibold">kematianPertama</span>
-                <span className="text-gray-800">(</span>
-                <span className="text-[#a31515]">&quot;umur 25&quot;</span>
-                <span className="text-gray-800">);</span>{" "}
-                <span className="text-[#008000] hidden sm:inline">// idealisme.exit()</span>
-              </span>
-
-              <span className="code-line block pl-2 sm:pl-5 mt-2 sm:mt-3">
-                <span className="text-[#0000ff]">while</span>{" "}
-                <span className="text-gray-800">(</span>
-                <span className="text-[#001080] font-semibold">sendiri</span>
-                <span className="text-gray-800">)</span>{" "}
-                <span className="text-gray-800">{"{"}</span>
-              </span>
-              <span className="code-line block pl-4 sm:pl-10 mt-1 sm:mt-2">
-                <span className="text-[#001080] font-semibold">berjalan</span>
-                <span className="text-gray-800">();</span>
-              </span>
-              <span className="code-line block pl-4 sm:pl-10 text-[#008000] hidden xs:block">
-                <span className="text-[#0000ff]">//</span> tanpa jaminan, tanpa janji
-              </span>
-              <span className="code-line block pl-2 sm:pl-5">
-                <span className="text-gray-800">{"}"}</span>
-              </span>
-
-              <span className="code-line block pl-2 sm:pl-5 mt-2 sm:mt-4">
-                <span className="text-[#0000ff]">await</span>{" "}
-                <span className="text-[#001080] font-semibold">kematianKedua</span>
-                <span className="text-gray-800">(</span>
-                <span className="text-[#a31515]">&quot;roh.meninggalkan(tubuh)&quot;</span>
-                <span className="text-gray-800">);</span>
-              </span>
-
-              <span className="code-line block pl-2 sm:pl-5 mt-2 sm:mt-4">
-                <span className="text-[#0000ff]">return</span>{" "}
-                <span className="text-[#a31515]">&quot;...&quot;</span>
-                <span className="text-gray-800">;</span>
-              </span>
-
-              <span className="code-line block mt-2 sm:mt-4">
-                <span className="text-gray-800">{"}"}</span>
-              </span>
-
-              <span
-                ref={cursor1Ref}
-                className="inline-block w-[2px] h-4 sm:h-5 bg-[#0000ff] align-middle opacity-0 ml-[2px] animate-pulse"
-              />
-            </code>
-          </pre>
-        </div>
-      </div>
-
-      {/* ✨ WINDOW 2: Ubur-ubur / Drifting (Kanan-Bawah) - RESPONSIVE */}
-      <div className="window-2 absolute left-1/2 -translate-x-1/2 md:right-[12%] md:left-auto md:-translate-x-0 xl:right-[17%] bottom-[5%] md:bottom-[10%] w-[85vw] sm:w-[480px] md:w-[520px] lg:w-[620px] xl:w-[720px] z-10">
-        <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-xl shadow-gray-200/50 w-full">
-          {/* Header - Responsive */}
-          <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 bg-[#f3f3f3] border-b border-[#e0e0e0]">
-            <div className="flex gap-1 sm:gap-2">
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ff5f56]" />
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ffbd2e]" />
-              <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#27c93f]" />
-            </div>
-            <span className="ml-2 sm:ml-3 text-[10px] sm:text-xs text-gray-500 font-mono truncate">ubur-ubur.tsx</span>
-            <div className="ml-auto flex items-center gap-1 sm:gap-2">
-              <span className="text-[8px] sm:text-xs text-gray-400 hidden xs:inline">TypeScript React</span>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs text-gray-500 font-mono truncate">Malam Putih</span>
+            <div className="ml-auto">
+              <span className="text-[8px] sm:text-[10px] text-gray-400">Dostoevsky</span>
             </div>
           </div>
 
-          {/* Code Content - Responsive dengan overflow scroll untuk mobile */}
-          <pre className="p-3 sm:p-4 md:p-6 font-mono text-[10px] sm:text-xs md:text-sm lg:text-base text-gray-800 leading-relaxed sm:leading-loose overflow-x-auto whitespace-pre bg-white">
-            <code className="block min-w-[300px] sm:min-w-0">
+          {/* Code Content - Mobile friendly */}
+          <pre className="p-3 sm:p-4 md:p-5 font-mono text-[9px] sm:text-xs md:text-sm text-gray-800 leading-relaxed overflow-x-auto whitespace-pre bg-white">
+            <code className="block min-w-[280px] sm:min-w-0">
               <span className="code-line block text-[#008000]">
-                <span className="text-[#0000ff]">//</span> aku melihat ubur-ubur itu
+                <span className="text-[#0000ff]">//</span> pertama kali diperlakukan seperti itu oleh N.
               </span>
 
-              <span className="code-line block mt-2 sm:mt-4">
+              <span className="code-line block mt-2">
                 <span className="text-[#0000ff]">const</span>{" "}
-                <span className="text-[#001080] font-semibold">mereka</span>{" "}
+                <span className="text-[#001080] font-semibold">pemimpi</span>{" "}
                 <span className="text-gray-800">=</span>{" "}
                 <span className="text-gray-800">{"{"}</span>
               </span>
-              <span className="code-line block pl-2 sm:pl-5">
-                <span className="text-[#001080] font-semibold">tujuan</span>
+              <span className="code-line block pl-2">
+                <span className="text-[#001080] font-semibold">rasa</span>
                 <span className="text-gray-800">:</span>{" "}
-                <span className="text-[#a31515]">&quot;none&quot;</span>
+                <span className="text-[#a31515]">&quot;cinta&quot;</span>
                 <span className="text-gray-800">,</span>
               </span>
-              <span className="code-line block pl-2 sm:pl-5">
-                <span className="text-[#001080] font-semibold">beban</span>
+              <span className="code-line block pl-2">
+                <span className="text-[#001080] font-semibold">alasan</span>
                 <span className="text-gray-800">:</span>{" "}
-                <span className="text-[#0000ff]">null</span>
+                <span className="text-[#a31515]">&quot;haus koneksi&quot;</span>
               </span>
               <span className="code-line block">
                 <span className="text-gray-800">{"}"};</span>
               </span>
 
-              <span className="code-line block pl-2 sm:pl-5 mt-2 sm:mt-4">
-                <span className="text-[#0000ff]">while</span>{" "}
-                <span className="text-gray-800">(</span>
-                <span className="text-[#001080] font-semibold">arus</span>
-                <span className="text-gray-800">)</span>{" "}
+              <span className="code-line block mt-2">
+                <span className="text-[#0000ff]">const</span>{" "}
+                <span className="text-[#001080] font-semibold">n</span>{" "}
+                <span className="text-gray-800">=</span>{" "}
                 <span className="text-gray-800">{"{"}</span>
               </span>
-              <span className="code-line block pl-4 sm:pl-10 mt-1 sm:mt-2">
-                <span className="text-[#001080] font-semibold">hanyut</span>
-                <span className="text-gray-800">();</span>
+              <span className="code-line block pl-2">
+                <span className="text-[#001080] font-semibold">rasa</span>
+                <span className="text-gray-800">:</span>{" "}
+                <span className="text-[#a31515]">&quot;senang&quot;</span>
+                <span className="text-gray-800">,</span>
               </span>
-              <span className="code-line block pl-4 sm:pl-10 text-[#008000] hidden xs:block">
-                <span className="text-[#0000ff]">//</span> tanpa bertanya &quot;mengapa&quot;
-              </span>
-              <span className="code-line block pl-2 sm:pl-5">
-                <span className="text-gray-800">{"}"}</span>
-              </span>
-
-              <span className="code-line block mt-2 sm:mt-4 text-[#008000] hidden xs:block">
-                <span className="text-[#0000ff]">//</span> kadang aku iri pada kesederhanaan mereka
-              </span>
-              <span className="code-line block mt-2 sm:mt-3">
-                <span className="text-[#0000ff]">if</span>{" "}
-                <span className="text-gray-800">(</span>
-                <span className="text-[#001080] font-semibold">pikiran</span>{" "}
-                <span className="text-gray-800">===</span>{" "}
-                <span className="text-[#a31515]">&quot;berat&quot;</span>
-                <span className="text-gray-800">)</span>{" "}
-                <span className="text-gray-800">{"{"}</span>
-              </span>
-              <span className="code-line block pl-4 sm:pl-10">
-                <span className="text-[#001080] font-semibold">berhenti</span>
-                <span className="text-gray-800">();</span>
-              </span>
-              <span className="code-line block pl-4 sm:pl-10">
-                <span className="text-[#001080] font-semibold">menatap</span>
-                <span className="text-gray-800">(</span>
-                <span className="text-[#001080] font-semibold">laut</span>
-                <span className="text-gray-800">);</span>
+              <span className="code-line block pl-2">
+                <span className="text-[#001080] font-semibold">batas</span>
+                <span className="text-gray-800">:</span>{" "}
+                <span className="text-[#a31515]">&quot;teman&quot;</span>
               </span>
               <span className="code-line block">
+                <span className="text-gray-800">{"}"};</span>
+              </span>
+
+              <span className="code-line block mt-2 text-[#008000] hidden xs:block">
+                <span className="text-[#0000ff]">//</span> ketimpangan harapan
+              </span>
+
+              <span className="code-line block mt-1">
+                <span className="text-[#0000ff]">if</span>{" "}
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">pemimpi</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">rasa</span>{" "}
+                <span className="text-gray-800">!==</span>{" "}
+                <span className="text-[#001080] font-semibold">n</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">rasa</span>
+                <span className="text-gray-800">)</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">pemimpi</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">memberi</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#a31515]">&quot;seluruh hati&quot;</span>
+                <span className="text-gray-800">);</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">n</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">menerima</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#a31515]">&quot;teman curhat&quot;</span>
+                <span className="text-gray-800">);</span>
+              </span>
+              <span className="code-line block pl-2">
                 <span className="text-gray-800">{"}"}</span>
               </span>
 
-              <span className="code-line block mt-2 sm:mt-4 text-[#008000] hidden xs:block">
-                <span className="text-[#0000ff]">//</span> tapi tetap di sini, memilih untuk ada
+              <span className="code-line block mt-2 text-[#008000] hidden sm:block">
+                <span className="text-[#0000ff]">//</span> &quot;Satu momen kebahagiaan penuh cukup untuk seumur hidup&quot;
+              </span>
+              <span className="code-line block mt-2 text-[#008000] sm:hidden">
+                <span className="text-[#0000ff]">//</span> &quot;Satu momen cukup&quot;
               </span>
 
               <span
-                ref={cursor2Ref}
-                className="inline-block w-[2px] h-4 sm:h-5 bg-[#0000ff] align-middle opacity-0 ml-[2px] animate-pulse"
+                ref={cursor1Ref}
+                className="inline-block w-[2px] h-3 sm:h-4 bg-[#0000ff] align-middle opacity-0 ml-[2px] animate-pulse"
               />
             </code>
           </pre>
         </div>
       </div>
 
-      {/* ✨ Floating particles - responsive */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(8)].map((_, i) => (
+      {/* WINDOW 2: Metamorfosis - MOBILE FIRST */}
+      <div className="window-2 absolute left-1/2 -translate-x-1/2 bottom-[5%] w-[95vw] max-w-[400px] sm:max-w-[450px] md:w-[480px] md:right-[10%] md:left-auto md:-translate-x-0 lg:right-[12%] xl:right-[15%] md:bottom-[15%] z-10">
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-lg shadow-gray-200/50 w-full">
+          {/* Header - Mobile compact */}
+          <div className="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+            <div className="flex gap-1">
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ff5f56]" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ffbd2e]" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#27c93f]" />
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs text-gray-500 font-mono truncate">Metamorfosis</span>
+            <div className="ml-auto">
+              <span className="text-[8px] sm:text-[10px] text-gray-400">Kafka</span>
+            </div>
+          </div>
+
+          {/* Code Content - Mobile friendly */}
+          <pre className="p-3 sm:p-4 md:p-5 font-mono text-[9px] sm:text-xs md:text-sm text-gray-800 leading-relaxed overflow-x-auto whitespace-pre bg-white">
+            <code className="block min-w-[280px] sm:min-w-0">
+              <span className="code-line block text-[#008000]">
+                <span className="text-[#0000ff]">//</span> Ketika G. terbangun, ia bukan lagi manusia
+              </span>
+
+              <span className="code-line block mt-2">
+                <span className="text-[#0000ff]">class</span>{" "}
+                <span className="text-[#001080] font-semibold">Manusia</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+
+              <span className="code-line block pl-2">
+                <span className="text-[#001080] font-semibold">constructor</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">fungsi</span>
+                <span className="text-gray-800">)</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+              <span className="code-line block pl-4">
+                <span className="text-[#0000ff]">this</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">nilai</span>{" "}
+                <span className="text-gray-800">=</span>{" "}
+                <span className="text-[#001080] font-semibold">fungsi</span>
+                <span className="text-gray-800">;</span>
+              </span>
+              <span className="code-line block pl-2">
+                <span className="text-gray-800">{"}"}</span>
+              </span>
+              <span className="code-line block">
+                <span className="text-gray-800">{"}"}</span>
+              </span>
+
+              <span className="code-line block mt-2">
+                <span className="text-[#0000ff]">const</span>{" "}
+                <span className="text-[#001080] font-semibold">g</span>{" "}
+                <span className="text-gray-800">=</span>{" "}
+                <span className="text-[#0000ff]">new</span>{" "}
+                <span className="text-[#001080] font-semibold">Manusia</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#a31515]">&quot;tulangPunggung&quot;</span>
+                <span className="text-gray-800">);</span>
+              </span>
+
+              <span className="code-line block mt-2 text-[#008000] hidden xs:block">
+                <span className="text-[#0000ff]">//</span> Suatu pagi, ia berubah menjadi serangga
+              </span>
+
+              <span className="code-line block mt-1">
+                <span className="text-[#0000ff]">if</span>{" "}
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">g</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">bentuk</span>{" "}
+                <span className="text-gray-800">!==</span>{" "}
+                <span className="text-[#a31515]">&quot;manusia&quot;</span>
+                <span className="text-gray-800">)</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">keluarga</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">jijik</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">g</span>
+                <span className="text-gray-800">);</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">kasihSayang</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">replace</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#a31515]">&quot;beban&quot;</span>
+                <span className="text-gray-800">);</span>
+              </span>
+              <span className="code-line block pl-2">
+                <span className="text-gray-800">{"}"}</span>
+              </span>
+
+              <span className="code-line block mt-2">
+                <span className="text-[#0000ff]">while</span>{" "}
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">terisolasi</span>
+                <span className="text-gray-800">)</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">g</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">kehilangan</span>
+                <span className="text-gray-800">(</span>
+                <span className="text-[#a31515]">&quot;identitas&quot;</span>
+                <span className="text-gray-800">);</span>
+              </span>
+              <span className="code-line block pl-2">
+                <span className="text-gray-800">{"}"}</span>
+              </span>
+
+              <span className="code-line block mt-2 text-[#008000] hidden sm:block">
+                <span className="text-[#0000ff]">//</span> Pada akhirnya, yang mati bukan hanya tubuh
+              </span>
+
+              <span className="code-line block mt-1">
+                <span className="text-[#0000ff]">if</span>{" "}
+                <span className="text-gray-800">(</span>
+                <span className="text-[#001080] font-semibold">dibutuhkan</span>{" "}
+                <span className="text-gray-800">===</span>{" "}
+                <span className="text-[#0000ff]">false</span>
+                <span className="text-gray-800">)</span>{" "}
+                <span className="text-gray-800">{"{"}</span>
+              </span>
+              <span className="code-line block pl-3">
+                <span className="text-[#001080] font-semibold">g</span>
+                <span className="text-gray-800">.</span>
+                <span className="text-[#001080] font-semibold">menyerah</span>
+                <span className="text-gray-800">();</span>
+              </span>
+              <span className="code-line block pl-2">
+                <span className="text-gray-800">{"}"}</span>
+              </span>
+
+              <span className="code-line block mt-2 text-[#008000]">
+                <span className="text-[#0000ff]">//</span> &quot;Aku tidak bisa bertahan&quot;
+              </span>
+
+              <span
+                ref={cursor2Ref}
+                className="inline-block w-[2px] h-3 sm:h-4 bg-[#0000ff] align-middle opacity-0 ml-[2px] animate-pulse"
+              />
+            </code>
+          </pre>
+        </div>
+      </div>
+
+      {/* Floating particles - minimal di mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
+        {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-gray-400/20"
+            className="absolute w-1 h-1 rounded-full bg-gray-400/20 floating-particle"
             style={{
-              top: `${10 + i * 12}%`,
-              left: i % 2 === 0 ? '5%' : '95%',
-              animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
-              animationDelay: `${i * 0.2}s`,
+              top: `${15 + i * 20}%`,
+              left: i % 2 === 0 ? '3%' : '97%',
             }}
           />
         ))}
@@ -336,16 +412,19 @@ const Window = () => {
 
       {/* CSS Animation */}
       <style>{`
-        @keyframes float {
+        @keyframes floatParticle {
           0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
-          50% { transform: translateY(-5px) translateX(1px); opacity: 0.4; }
+          50% { transform: translateY(-8px) translateX(2px); opacity: 0.4; }
         }
-        @media (max-width: 640px) {
-          @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.1; }
-            50% { transform: translateY(-3px) translateX(1px); opacity: 0.3; }
-          }
+        
+        .floating-particle {
+          animation: floatParticle 4s ease-in-out infinite;
         }
+        
+        .floating-particle:nth-child(1) { animation-delay: 0s; }
+        .floating-particle:nth-child(2) { animation-delay: 0.5s; }
+        .floating-particle:nth-child(3) { animation-delay: 1s; }
+        .floating-particle:nth-child(4) { animation-delay: 1.5s; }
       `}</style>
     </section>
   );

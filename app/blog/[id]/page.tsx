@@ -27,7 +27,9 @@ export default function CerpenDetail() {
   
   // State untuk audio
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioError, setAudioError] = useState(false);
   const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const hasAttemptedAutoPlay = useRef(false);
 
   // Play Background Music Blog
   const playBGM = () => {
@@ -38,15 +40,52 @@ export default function CerpenDetail() {
         bgmAudioRef.current.volume = 0.15;
       }
       
-      bgmAudioRef.current.play()
-        .then(() => {
-          setAudioEnabled(true);
-          console.log("Blog BGM started");
-        })
-        .catch(e => console.log("BGM Play Error:", e));
+      // Reset error state
+      setAudioError(false);
+      
+      // Play audio
+      const playPromise = bgmAudioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setAudioEnabled(true);
+            console.log("Blog BGM started");
+            
+            // Simpan status ke sessionStorage
+            sessionStorage.setItem('blogAudioEnabled', 'true');
+            sessionStorage.setItem('blogAudioTimestamp', Date.now().toString());
+          })
+          .catch(e => {
+            console.log("BGM Play Error:", e);
+            setAudioError(true);
+            setAudioEnabled(false);
+            
+            // Fallback: coba play lagi setelah interaksi user
+            const handleFirstInteraction = () => {
+              if (bgmAudioRef.current) {
+                bgmAudioRef.current.play()
+                  .then(() => {
+                    setAudioEnabled(true);
+                    setAudioError(false);
+                    sessionStorage.setItem('blogAudioEnabled', 'true');
+                    sessionStorage.setItem('blogAudioTimestamp', Date.now().toString());
+                  })
+                  .catch(console.log);
+              }
+              document.removeEventListener('click', handleFirstInteraction);
+              document.removeEventListener('touchstart', handleFirstInteraction);
+            };
+            
+            document.addEventListener('click', handleFirstInteraction, { once: true });
+            document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+          });
+      }
         
     } catch (e) {
       console.log("BGM Error:", e);
+      setAudioError(true);
+      setAudioEnabled(false);
     }
   };
 
@@ -54,10 +93,10 @@ export default function CerpenDetail() {
   const stopBGM = () => {
     if (bgmAudioRef.current) {
       bgmAudioRef.current.pause();
-      bgmAudioRef.current.currentTime = 0;
-      bgmAudioRef.current = null;
+      // Tidak set currentTime ke 0 agar bisa lanjut dari posisi terakhir
     }
     setAudioEnabled(false);
+    sessionStorage.setItem('blogAudioEnabled', 'false');
   };
 
   // Toggle audio
@@ -69,23 +108,53 @@ export default function CerpenDetail() {
     }
   };
 
-  // Auto play BGM saat halaman dimuat
+  // Check audio status dari sessionStorage saat mount
   useEffect(() => {
     const audioStatus = sessionStorage.getItem('blogAudioEnabled');
+    const audioTimestamp = sessionStorage.getItem('blogAudioTimestamp');
     
-    if (audioStatus === 'true') {
-      const timer = setTimeout(() => {
-        playBGM();
-      }, 500);
+    // Cek apakah audio seharusnya menyala (dari halaman sebelumnya)
+    if (audioStatus === 'true' && !hasAttemptedAutoPlay.current) {
+      hasAttemptedAutoPlay.current = true;
       
-      return () => clearTimeout(timer);
+      // Cek apakah timestamp masih relevan (kurang dari 1 detik yang lalu)
+      // Ini untuk menghindari audio nyala di halaman yang di-refresh setelah lama
+      if (audioTimestamp) {
+        const timeDiff = Date.now() - parseInt(audioTimestamp);
+        if (timeDiff < 1000) { // Kurang dari 1 detik
+          playBGM();
+        } else {
+          // Terlalu lama, reset status
+          sessionStorage.setItem('blogAudioEnabled', 'false');
+        }
+      } else {
+        playBGM();
+      }
     }
     
+    // Cleanup saat komponen unmount
     return () => {
-      console.log("Cerpen detail page unmounting, stopping audio...");
-      stopBGM();
+      console.log("Cerpen detail page unmounting...");
+      // Jangan stop BGM di sini karena kita ingin audio lanjut ke halaman lain
+      // Hanya cleanup referensi
     };
   }, []);
+
+  // Efek untuk menangani saat user pindah halaman (popstate)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Simpan timestamp saat user akan meninggalkan halaman
+      if (audioEnabled) {
+        sessionStorage.setItem('blogAudioTimestamp', Date.now().toString());
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [audioEnabled]);
 
   useEffect(() => {
     const fetchCerpen = async () => {
@@ -167,10 +236,20 @@ export default function CerpenDetail() {
           {/* Audio Control Button */}
           <button
             onClick={toggleAudio}
-            className="p-2 bg-black/60 border border-[#5f3a4a]/30 rounded-full hover:border-[#5f3a4a] transition-all duration-300 backdrop-blur-sm"
-            title={audioEnabled ? "Matikan Musik" : "Nyalakan Musik"}
+            className={`p-2 bg-black/60 border rounded-full transition-all duration-300 backdrop-blur-sm ${
+              audioError 
+                ? 'border-red-500/30 hover:border-red-500' 
+                : 'border-[#5f3a4a]/30 hover:border-[#5f3a4a]'
+            }`}
+            title={
+              audioError 
+                ? "Klik untuk mencoba lagi" 
+                : (audioEnabled ? "Matikan Musik" : "Nyalakan Musik")
+            }
           >
-            {audioEnabled ? (
+            {audioError ? (
+              <span className="text-red-500/50 text-xs font-mono px-1">!</span>
+            ) : audioEnabled ? (
               <Volume2 className="w-4 h-4 text-[#5f3a4a]" />
             ) : (
               <VolumeX className="w-4 h-4 text-[#5f3a4a]/50" />
@@ -208,7 +287,12 @@ export default function CerpenDetail() {
           <div className="prose prose-invert max-w-none">
             {cerpen.content.split('\n\n').map((paragraph, idx) => (
               <p key={idx} className="text-sm sm:text-base text-gray-400 leading-relaxed mb-4 font-light">
-                {paragraph}
+                {paragraph.split('\n').map((line, lineIdx) => (
+                  <span key={lineIdx}>
+                    {line}
+                    {lineIdx < paragraph.split('\n').length - 1 && <br />}
+                  </span>
+                ))}
               </p>
             ))}
           </div>
