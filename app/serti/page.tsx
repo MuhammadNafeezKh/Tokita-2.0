@@ -390,18 +390,7 @@ export default function CertificatesPage() {
             </div>
           )}
 
-          {/* Footer Note - OMORI style */}
-          <div className="text-center mt-12 pb-8">
-            <p className="text-[#C0C0C0] text-sm drop-shadow-[1px_1px_0px_#000000]">
-              Tertarik dengan sertifikat tertentu? <br className="md:hidden"/>
-              <button 
-                onClick={() => setAlertMessage("Silakan hubungi saya via email untuk verifikasi sertifikat.")}
-                className="underline hover:text-white transition-colors font-medium"
-              >
-                Hubungi saya untuk verifikasi.
-              </button>
-            </p>
-          </div>
+          
 
         </div>
       </div>

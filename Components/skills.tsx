@@ -5,14 +5,12 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Database,
-  Globe,
   FileCode,
   Terminal,
   Server,
   GitBranch,
   Cloud,
   Braces,
-  Zap,
 } from "lucide-react";
 import {
   FaReact,
@@ -23,7 +21,6 @@ import {
   FaCss3Alt,
   FaGithub,
   FaNodeJs,
-  FaUnity,
 } from "react-icons/fa";
 import {
   SiTailwindcss,
@@ -37,7 +34,12 @@ import {
   SiVite,
   SiMysql,
   SiMongodb,
+  SiGodotengine,
+  SiNextdotjs,
+  
 } from "react-icons/si";
+import { SiFlutter } from "react-icons/si";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,8 +55,18 @@ interface SkillCategory {
   skills: SkillItem[];
 }
 
+// ✅ Data Languages untuk menggantikan Most Used Languages
+interface LanguageData {
+  flag: string;
+  name: string;
+  level: string;
+  percent: number;
+  accentColor: string;
+}
+
 const Skills = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const percentRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   const skillCategories: SkillCategory[] = [
     {
@@ -69,6 +81,9 @@ const Skills = () => {
         { icon: FaReact, name: "React.js", color: "text-sky-400" },
         { icon: SiVite, name: "Vite", color: "text-purple-500" },
         { icon: FaVuejs, name: "Vue.js", color: "text-emerald-500" },
+        { icon: SiNextdotjs, name: "Next.js", color: "text-gray-900" },
+                { icon: SiFlutter, name: "Flutter", color: "text-blue-900" },
+
       ],
     },
     {
@@ -86,6 +101,7 @@ const Skills = () => {
       title: "💾 Databases",
       skills: [
         { icon: SiMysql, name: "MySQL / MariaDB", color: "text-blue-500" },
+        { icon: Database, name: "SQLite3", color: "text-grey-500" },
         { icon: SiMongodb, name: "MongoDB", color: "text-green-500" },
         { icon: Database, name: "Prisma ORM", color: "text-indigo-500" },
       ],
@@ -112,18 +128,19 @@ const Skills = () => {
       skills: [
         { icon: SiArduino, name: "C++ / Arduino", color: "text-teal-500" },
         { icon: SiRobloxstudio, name: "Roblox (Luau)", color: "text-black" },
-        { icon: FaUnity, name: "Unity Engine", color: "text-gray-800" },
+        { icon: SiGodotengine, name: "Godot Engine", color: "text-blue-500" },
       ],
     },
   ];
 
-  // 🔹 Data untuk GitHub-style language overview
-  const languageStats = [
-    { name: "HTML/CSS", percent: 32, color: "bg-[#6B9FBF]" },
-    { name: "JavaScript", percent: 30, color: "bg-[#8FC5F0]" },
-    { name: "TypeScript", percent: 18, color: "bg-[#4A6B7F]" },
-    { name: "Python", percent: 12, color: "bg-[#B06C6C]" },
-    { name: "Other", percent: 8, color: "bg-[#5C3A3A]" },
+  // ✅ DATA LANGUAGES (diambil dari LanguagesSection)
+  const languages: LanguageData[] = [
+    { flag: "🇮🇩", name: "Indonesia", level: "Native / Fasih", percent: 100, accentColor: "#6B9FBF" },
+    { flag: "🇬🇧", name: "English", level: "B2 (Upper Intermediate)", percent: 75, accentColor: "#5A8AA8" },
+    { flag: "🇸🇦", name: "Arabic", level: "A2 (Elementary)", percent: 45, accentColor: "#B08F7C" },
+    { flag: "🇯🇵", name: "Japanese", level: "JLPT N5", percent: 40, accentColor: "#B06C6C" },
+    { flag: "🇩🇪", name: "German", level: "A1 (Beginner)", percent: 20, accentColor: "#8B7B6E" },
+    { flag: "🇷🇺", name: "Russian", level: "Alphabet & Basics", percent: 10, accentColor: "#6B8F8F" },
   ];
 
   useEffect(() => {
@@ -144,7 +161,7 @@ const Skills = () => {
         }
       );
 
-      // ✨ Animasi tiap category card - DIPERBAIKI dengan type assertion
+      // ✨ Animasi tiap category card
       const cards = gsap.utils.toArray(".skill-category-card") as HTMLElement[];
       cards.forEach((card, i) => {
         gsap.fromTo(
@@ -166,7 +183,7 @@ const Skills = () => {
         );
       });
 
-      // ✨ Animasi tiap skill badge - DIPERBAIKI dengan type assertion
+      // ✨ Animasi tiap skill badge
       const badges = gsap.utils.toArray(".skill-badge") as HTMLElement[];
       badges.forEach((badge) => {
         gsap.fromTo(
@@ -186,22 +203,64 @@ const Skills = () => {
         );
       });
 
-   // ✨ Animasi GitHub-style bars - DIPERBAIKI
-gsap.fromTo(
-  ".lang-bar",
-  { width: 0 },
-  {
-    width: (i: number, target: HTMLElement) => 
-      parseFloat(target.getAttribute("data-width") || "0"),
-    duration: 1.2,
-    stagger: 0.15,
-    ease: "power2.out",
-    scrollTrigger: {
-      trigger: ".lang-overview",
-      start: "top 85%",
-    },
-  }
-);
+      // ✨ Animasi Language Bars + Counter Percentage
+      const langCards = document.querySelectorAll<HTMLElement>(".lang-card");
+      
+      langCards.forEach((card, index) => {
+        const barFill = card.querySelector<HTMLElement>(".lang-bar-fill");
+        const percentText = percentRefs.current[index];
+        const targetPercent = languages[index]?.percent || 0;
+
+        if (!barFill || !percentText) return;
+
+        gsap.set(barFill, { width: "0%" });
+        gsap.set(percentText, { innerText: "0" });
+
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 85%",
+          onEnter: () => {
+            gsap.to(barFill, {
+              width: `${targetPercent}%`,
+              duration: 1.5,
+              ease: "power2.out",
+            });
+            gsap.to(percentText, {
+              innerText: targetPercent,
+              duration: 1.5,
+              ease: "power2.out",
+              snap: { innerText: 1 },
+              onUpdate: function () {
+                percentText.textContent = Math.round(parseFloat(percentText.innerText)) + "%";
+              },
+            });
+          },
+          onEnterBack: () => {
+            gsap.to(barFill, {
+              width: `${targetPercent}%`,
+              duration: 1.5,
+              ease: "power2.out",
+            });
+            gsap.to(percentText, {
+              innerText: targetPercent,
+              duration: 1.5,
+              ease: "power2.out",
+              snap: { innerText: 1 },
+              onUpdate: function () {
+                percentText.textContent = Math.round(parseFloat(percentText.innerText)) + "%";
+              },
+            });
+          },
+          onLeave: () => {
+            gsap.set(barFill, { width: "0%" });
+            gsap.set(percentText, { innerText: "0", textContent: "0%" });
+          },
+          onLeaveBack: () => {
+            gsap.set(barFill, { width: "0%" });
+            gsap.set(percentText, { innerText: "0", textContent: "0%" });
+          },
+        });
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -224,7 +283,7 @@ gsap.fromTo(
       <div className="absolute inset-0 bg-black/30 z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* 🔹 Judul Section - OMORI style */}
+        {/* 🔹 Judul Section */}
         <div className="text-center mb-12">
           <h2 className="skills-title text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-[4px_4px_0px_#000000]">
             ⚙️ Skills & Tools
@@ -232,14 +291,14 @@ gsap.fromTo(
           <div className="w-20 h-1 bg-gradient-to-r from-[#6B9FBF] via-[#B06C6C] to-[#6B9FBF] mx-auto rounded"></div>
         </div>
 
-        {/* 🔹 Grid Categories - OMORI dark style */}
+        {/* 🔹 Grid Categories */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {skillCategories.map((category, index) => (
             <div
               key={index}
               className="skill-category-card bg-[#232323] border-2 border-[#4A6B7F] shadow-[8px_8px_0px_#1E2C36] rounded-2xl overflow-hidden hover:shadow-[12px_12px_0px_#1E2C36] hover:translate-y-[-2px] transition-all duration-300"
             >
-              {/* Card Header - OMORI style */}
+              {/* Card Header */}
               <div className="bg-gradient-to-r from-[#2C2C2C] to-[#232323] border-b-2 border-[#4A6B7F] py-3 px-4">
                 <h3 className="text-base font-semibold text-white drop-shadow-[2px_2px_0px_#000000]">
                   {category.title}
@@ -273,67 +332,78 @@ gsap.fromTo(
           ))}
         </div>
 
-        {/* 🔹 GitHub-style Language Overview - OMORI style */}
-        <div className="lang-overview mt-10 p-4 bg-[#232323] border-2 border-[#4A6B7F] shadow-[8px_8px_0px_#1E2C36] rounded-2xl max-w-2xl mx-auto">
-          <h4 className="text-center font-semibold text-white mb-3 text-sm drop-shadow-[2px_2px_0px_#000000]">
-            📊 Most Used Languages
+        {/* 🔹 Languages Mastered Section - Menggantikan Most Used Languages */}
+        <div className="lang-overview mt-10 p-6 bg-[#232323] border-2 border-[#4A6B7F] shadow-[8px_8px_0px_#1E2C36] rounded-2xl max-w-3xl mx-auto">
+          <h4 className="text-center font-semibold text-white mb-5 text-xl drop-shadow-[2px_2px_0px_#000000]">
+            🌍 Languages Mastered
           </h4>
-          <div className="space-y-2">
-            {languageStats.map((lang, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-xs font-medium text-white w-24 flex-shrink-0 drop-shadow-[1px_1px_0px_#000000]">
-                  {lang.name}
-                </span>
-                <div className="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden border border-[#4A6B7F]/30">
-                  <div
-                    className={`lang-bar h-full ${lang.color} rounded-full transition-all duration-300`}
-                    data-width={`${lang.percent}%`}
-                    style={{ width: 0 }}
-                    role="progressbar"
-                    aria-valuenow={lang.percent}
-                    aria-label={`${lang.name}: ${lang.percent}%`}
-                  ></div>
+          
+          <div className="space-y-4">
+            {languages.map((lang, index) => (
+              <div 
+                key={index} 
+                className="lang-card flex flex-col gap-2"
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl opacity-90 drop-shadow-[2px_2px_0px_#000000]">
+                      {lang.flag}
+                    </span>
+                    <div>
+                      <h5 className="text-sm font-medium text-white drop-shadow-[1px_1px_0px_#000000]">
+                        {lang.name}
+                      </h5>
+                      <span className="text-xs text-[#C0C0C0] italic">
+                        {lang.level}
+                      </span>
+                    </div>
+                  </div>
+                  <span 
+                    ref={(el) => {
+                      percentRefs.current[index] = el;
+                    }}
+                    className="text-xs font-bold text-white bg-[#2C2C2C] px-2.5 py-1 rounded-full border border-[#4A6B7F] font-mono min-w-[3rem] text-center drop-shadow-[1px_1px_0px_#000000]"
+                  >
+                    0%
+                  </span>
                 </div>
-                <span className="text-xs text-[#F0F0F0] w-10 text-right drop-shadow-[1px_1px_0px_#000000]">
-                  {lang.percent}%
-                </span>
+
+                <div className="w-full h-2 bg-[#2C2C2C] rounded-full overflow-hidden border border-[#4A6B7F]/30">
+                  <div
+                    className="lang-bar-fill h-full rounded-full transition-all duration-300 relative"
+                    style={{ 
+                      background: `linear-gradient(90deg, ${lang.accentColor}, ${lang.accentColor}CC)`,
+                      boxShadow: `0 0 8px ${lang.accentColor}40`,
+                      width: 0
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent rounded-full" />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-          {/* Visual bar legend seperti GitHub - OMORI style */}
-          <div className="flex gap-1 mt-3 h-2 rounded-full overflow-hidden border border-[#4A6B7F]/30">
-            {languageStats.map((lang, i) => (
+
+          {/* Visual bar legend seperti GitHub */}
+          <div className="flex gap-1 mt-4 h-2 rounded-full overflow-hidden border border-[#4A6B7F]/30">
+            {languages.map((lang, i) => (
               <div
                 key={i}
-                className={`${lang.color} flex-1`}
-                style={{ flex: lang.percent }}
+                className="h-full"
+                style={{ 
+                  flex: lang.percent,
+                  background: lang.accentColor,
+                  boxShadow: `0 0 4px ${lang.accentColor}80`
+                }}
                 title={`${lang.name}: ${lang.percent}%`}
-              ></div>
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Garis pemisah bawah - OMORI style */}
+      {/* Garis pemisah bawah */}
       <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B9FBF] via-[#B06C6C] to-[#6B9FBF] opacity-50"></div>
-
-      {/* 🔹 Custom CSS */}
-      <style>{`
-        .rounded-4 { border-radius: 1rem !important; }
-        .rounded-full { border-radius: 9999px !important; }
-        
-        .skill-badge:hover {
-          transform: translateY(-1px);
-        }
-        .lang-bar { transition: width 0.3s ease; }
-        
-        /* Warna untuk language bars */
-        .bg-\\[\\#6B9FBF\\] { background-color: #6B9FBF; }
-        .bg-\\[\\#8FC5F0\\] { background-color: #8FC5F0; }
-        .bg-\\[\\#4A6B7F\\] { background-color: #4A6B7F; }
-        .bg-\\[\\#B06C6C\\] { background-color: #B06C6C; }
-        .bg-\\[\\#5C3A3A\\] { background-color: #5C3A3A; }
-      `}</style>
     </section>
   );
 };

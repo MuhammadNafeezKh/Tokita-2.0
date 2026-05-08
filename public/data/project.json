@@ -45,10 +45,23 @@
   "longDesc": "A simple bookshelf application that allows users to manage their reading list. Add books with title, author, and year; mark them as read or unread; and delete entries. All data is stored locally in the browser using Local Storage, so no backend or login required. Built with vanilla JavaScript to practice DOM manipulation and data persistence.",
   "tags": ["HTML5", "CSS3", "JavaScript", "LocalStorage", "DOM Manipulation"],
   "status": "live",
-  "featured": true,
+  "featured": false,
   "image": "/buku.png",
   "github": "https://github.com/MuhammadNafeezKh/LocalStorage",
   "demo": "https://buku-local.vercel.app/",
+  "year": 2026
+},
+{
+  "id": 5,
+  "title": "FinSmart",
+  "shortDesc": "Personal tracker financial",
+  "longDesc": "Sebuah Website sebagai tracker finansial terutama bagi GenZ yang mudah sekali membeli hal yang hedon, ini merupakan Capstone dari DBS Dicoding Camp di dibantu oleh teman-teman CFS.",
+  "tags": ["Next.js", "Express", "Zod", "Turborepo", "Node.js"],
+  "status": "live",
+  "featured": true,
+  "image": "/Finsmart.png",
+  "github": "https://github.com/IvanoWisnuBudiLaras/CAPSTONE",
+  "demo": "https://finsmart-mu.vercel.app/dashboard",
   "year": 2026
 }
 ]

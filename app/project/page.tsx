@@ -7,7 +7,7 @@ import { ExternalLink, Github, Star, ChevronLeft, ChevronRight, X, Loader2 } fro
 import Image from "next/image";
 
 // ✅ Import JSON - path sesuai request
-import projectsData from "../public/data/project.json";
+import projectsData from "../../public/data/project.json";
 
 gsap.registerPlugin(ScrollTrigger);
 

@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link as ScrollLink } from "react-scroll";
-import Link from "next/link"; // Import Link dari Next.js untuk navigasi halaman
-import { Menu, X, BookOpen } from "lucide-react"; // Tambah BookOpen icon
+import Link from "next/link";
+import { Menu, X, BookOpen } from "lucide-react";
 import { gsap } from "gsap";
 
 interface MenuItem {
   name: string;
   to: string;
-  isPage?: boolean; // Untuk membedakan link halaman atau scroll
-  href?: string; // Untuk link ke halaman lain
+  isPage?: boolean;
+  href?: string;
 }
 
 const Navbar: React.FC = () => {
@@ -19,46 +19,43 @@ const Navbar: React.FC = () => {
   const navRef = useRef<HTMLElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
+  // Hanya menu yang sesuai dengan section di homepage
   const menuItems: MenuItem[] = [
-    { name: "About", to: "about" },
-    { name: "Journey", to: "journey" },
-    { name: "Languages", to: "languages" },
+    { name: "Education", to: "education" },      // Sesuai dengan id="education"
     { name: "Skills", to: "skills" },
     { name: "Projects", to: "projects" },
     { name: "Contact", to: "contact" },
-    // Tambah link ke blog
-    { name: "Cerita Maria", to: "blog", isPage: true, href: "/blog" }
+    { name: "Blog", to: "blog", isPage: true, href: "/blog" },
   ];
 
-  // Navbar entrance animation
+  // Entrance animation
   useEffect(() => {
     if (navRef.current) {
       gsap.fromTo(
         navRef.current,
         { y: -80, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }
       );
     }
   }, []);
 
-  // Scroll detection
+  // Scroll detection untuk efek blur/background
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Mobile menu animation
+  // Animasi mobile menu
   useEffect(() => {
     if (mobileMenuRef.current) {
       if (isOpen) {
         gsap.fromTo(
           mobileMenuRef.current,
           { opacity: 0, y: -20 },
-          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
         );
         document.body.style.overflow = "hidden";
       } else {
@@ -67,7 +64,7 @@ const Navbar: React.FC = () => {
     }
   }, [isOpen]);
 
-  // Close menu on outside click
+  // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -77,11 +74,9 @@ const Navbar: React.FC = () => {
         setIsOpen(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
@@ -90,85 +85,121 @@ const Navbar: React.FC = () => {
       ref={navRef}
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-md shadow-md"
-          : "bg-transparent"
+          ? "bg-white/90 backdrop-blur-md shadow-sm"
+          : "bg-white/80 backdrop-blur-sm"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex justify-between items-center">
-          
-          {/* Logo */}
-          <ScrollLink
-            to="hero"
-            smooth
-            duration={500}
-            className="text-2xl font-bold cursor-pointer text-gray-800 hover:text-sky-500 transition-colors"
+      <div className="mx-auto flex h-12 max-w-fit items-center justify-center gap-2 px-4 sm:px-6 mt-3 rounded-full shadow-md border border-gray-200 bg-white/95">
+        {/* Logo - scroll ke hero */}
+        <ScrollLink
+          to="hero"
+          smooth
+          duration={500}
+          className="flex items-center gap-1 text-lg text-gray-700 cursor-pointer shrink-0 hover:text-sky-500 transition-colors px-2"
+        >
+          <svg
+            className="size-5 text-sky-500"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            Nafeez
-          </ScrollLink>
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 9l3 3l-3 3" />
+            <path d="M13 15l3 0" />
+            <path d="M3 6a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2l0 -12" />
+          </svg>
+          <span className="font-semibold">Nafeez</span>
+        </ScrollLink>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) => (
-              item.isPage ? (
-                // Link ke halaman lain (blog)
-                <Link
-                  key={item.to}
-                  href={item.href || '#'}
-                  className="relative font-medium text-gray-700 cursor-pointer group transition-colors flex items-center gap-1"
-                >
-                  {item.name === "Cerita Maria" && <BookOpen size={16} className="text-[#8B5F7F]" />}
-                  {item.name}
-                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
-                </Link>
-              ) : (
-                // Link scroll dalam halaman
-                <ScrollLink
-                  key={item.to}
-                  to={item.to}
-                  smooth
-                  duration={500}
-                  spy
-                  offset={-80}
-                  activeClass="text-sky-500"
-                  className="relative font-medium text-gray-700 cursor-pointer group transition-colors"
-                >
-                  {item.name}
-                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
-                </ScrollLink>
-              )
-            ))}
-          </div>
+        {/* Separator line */}
+        <div className="w-px h-5 bg-gray-300 mx-1"></div>
 
-          {/* Mobile Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-800"
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+        {/* Desktop Menu - di tengah */}
+        <div className="hidden md:block">
+          <nav aria-label="Global">
+            <ul className="flex items-center justify-center gap-1 text-sm">
+              {menuItems.map((item) =>
+                item.isPage ? (
+                  <li key={item.to}>
+                    <Link
+                      href={item.href || "#"}
+                      className="flex items-center gap-1 px-2 py-1.5 text-gray-600 transition hover:text-sky-500 rounded-lg hover:bg-gray-50"
+                    >
+                      {item.name === "Blog" && (
+                        <BookOpen size={14} className="text-sky-500" />
+                      )}
+                      {item.name}
+                    </Link>
+                  </li>
+                ) : (
+                  <li key={item.to}>
+                    <ScrollLink
+                      to={item.to}
+                      smooth
+                      duration={500}
+                      spy
+                      offset={-80}
+                      activeClass="text-sky-500 font-medium"
+                      className="cursor-pointer px-2 py-1.5 text-gray-600 transition hover:text-sky-500 rounded-lg hover:bg-gray-50"
+                    >
+                      {item.name}
+                    </ScrollLink>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div
-            ref={mobileMenuRef}
-            className="md:hidden mt-4 pb-4 space-y-4 bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4"
-          >
-            {menuItems.map((item) => (
+        {/* Separator line */}
+        <div className="hidden md:block w-px h-5 bg-gray-300 mx-1"></div>
+
+        {/* Kanan: Avatar */}
+        <div className="hidden md:flex items-center gap-3">
+          <div className="shrink-0">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+              N
+            </div>
+          </div>
+        </div>
+
+        {/* Tombol mobile */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="block md:hidden rounded-full bg-gray-100 p-1.5 text-gray-600 transition hover:bg-gray-200"
+        >
+          <span className="sr-only">Toggle menu</span>
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden absolute top-14 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-lg z-40"
+        >
+          <div className="flex flex-col space-y-1 px-4 py-3">
+            {menuItems.map((item) =>
               item.isPage ? (
-                // Link ke halaman lain di mobile
                 <Link
                   key={item.to}
-                  href={item.href || '#'}
+                  href={item.href || "#"}
                   onClick={() => setIsOpen(false)}
-                  className="block font-medium text-gray-700 hover:text-sky-500 transition-colors flex items-center gap-2"
+                  className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-sky-500 hover:bg-gray-50 rounded-lg transition"
                 >
-                  {item.name === "Cerita Maria" && <BookOpen size={16} className="text-[#8B5F7F]" />}
+                  {item.name === "Blog" && (
+                    <BookOpen size={16} className="text-sky-500" />
+                  )}
                   {item.name}
                 </Link>
               ) : (
-                // Link scroll di mobile
                 <ScrollLink
                   key={item.to}
                   to={item.to}
@@ -177,15 +208,15 @@ const Navbar: React.FC = () => {
                   spy
                   offset={-80}
                   onClick={() => setIsOpen(false)}
-                  className="block font-medium text-gray-700 hover:text-sky-500 transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:text-sky-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
                 >
                   {item.name}
                 </ScrollLink>
               )
-            ))}
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 };
