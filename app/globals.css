@@ -70,9 +70,9 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   color: var(--text);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2); /* Efek glow */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2);
   background-attachment: fixed;
   min-height: 100vh;
   background-color: var(--pure-black);
@@ -81,10 +81,11 @@ body {
     radial-gradient(circle at 90% 80%, rgba(139, 76, 76, 0.1) 0%, transparent 30%);
 }
 
+/* Update heading fonts juga */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   color: var(--text-heading);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.3); /* Efek glow lebih kuat untuk heading */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 /* ✅ ADDED: Custom Cursor Styles */

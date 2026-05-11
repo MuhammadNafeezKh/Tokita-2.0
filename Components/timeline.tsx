@@ -92,12 +92,14 @@ const ExperienceTimeline = () => {
 
             return (
               <li
-                key={index}
-                ref={(el) => (itemsRef.current[index] = el)}
-                className={`relative flex w-full ${
-                  isLeft ? "justify-start" : "justify-end"
-                }`}
-              >
+  key={index}
+  ref={(el) => { 
+    itemsRef.current[index] = el; 
+  }}
+  className={`relative flex w-full ${
+    isLeft ? "justify-start" : "justify-end"
+  }`}
+>
                 {/* DOT */}
                 <span className="absolute left-1/2 -translate-x-1/2 top-6 w-4 h-4 rounded-full bg-[#6B9FBF] border-4 border-[#1A1A1A]" />
 
