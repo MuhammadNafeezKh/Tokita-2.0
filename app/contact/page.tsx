@@ -1,136 +1,134 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
-import { 
-  Mail, 
-  Github, 
-  Instagram, 
-  Linkedin, 
-  Copy, 
-  Check, 
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  Mail,
+  Github,
+  Instagram,
+  Linkedin,
+  Copy,
+  Check,
   ExternalLink,
-  MessageCircle 
+  MessageCircle,
+  MapPin,
+  Clock,
 } from "lucide-react";
 
-// Tipe data untuk partikel (opsional, untuk TypeScript)
-type Particle = {
-  top: string;
-  left: string;
-  delay: string;
-};
+gsap.registerPlugin(ScrollTrigger);
 
+// ============================================================================
+// TYPES
+// ============================================================================
+interface ContactMethod {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  action: string;
+  external?: boolean;
+  accent: string;
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 const ContactSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | HTMLAnchorElement | null)[]>([]);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLAnchorElement | HTMLDivElement | null)[]>([]);
   const [copied, setCopied] = useState(false);
-  
-  // ✅ State untuk menyimpan posisi partikel (client-side only)
-  const [particles, setParticles] = useState<Particle[]>([]);
 
-  const contactMethods = [
-    {
-      icon: Mail,
-      label: "Email",
-      value: "nafismuhammad277@gmail.com",
-      action: "mailto:nafismuhammad277@gmail.com",
-      color: "bg-[#2C2C2C] text-[#8FC5F0] border-[#4A6B7F]",
-    },
+  const contactMethods: ContactMethod[] = [
     {
       icon: Github,
       label: "GitHub",
-      value: "@MuhammadNafeezKh",
-      action: "https://github.com/MuhammadNafeezKh",
-      color: "bg-[#2C2C2C] text-[#F0F0F0] border-[#4A6B7F]",
+      value: "@TokitaKun",
+      action: "https://github.com/Tokitakun",
       external: true,
-    },
-    {
-      icon: Instagram,
-      label: "Instagram",
-      value: "@_nafietzsche",
-      action: "https://www.instagram.com/_nafietzsche/",
-      color: "bg-[#2C2C2C] text-[#F08B8B] border-[#B06C6C]",
-      external: true,
+      accent: "blue",
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
       value: "Muhammad Nafis",
       action: "https://www.linkedin.com/in/muhammad-dzurunnafis-khairuddin/",
-      color: "bg-[#2C2C2C] text-[#8FC5F0] border-[#4A6B7F]",
       external: true,
+      accent: "blue",
+    },
+    {
+      icon: Instagram,
+      label: "Instagram",
+      value: "@_nafietzsche",
+      action: "https://www.instagram.com/_nafietzsche/",
+      external: true,
+      accent: "coral",
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: "Chat langsung",
+      value: "+62 856-1470-816",
       action: "https://wa.me/628561470816",
-      color: "bg-[#2C2C2C] text-[#6B9FBF] border-[#4A6B7F]",
       external: true,
+      accent: "green",
     },
   ];
 
-  // ✅ Generate random positions HANYA di client (setelah mount)
-  useEffect(() => {
-    const generatedParticles = [...Array(12)].map((_, i) => ({
-      top: `${10 + Math.random() * 80}%`,
-      left: `${5 + Math.random() * 90}%`,
-      delay: `${i * 0.2}s`,
-    }));
-    setParticles(generatedParticles);
+  // Handle copy email
+  const handleCopyEmail = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText("nafismuhammad277@gmail.com");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
   }, []);
 
-  // ✨ GSAP Entrance Animation
+  // GSAP Animations
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate cards staggered
+      // Header animation
       gsap.fromTo(
-        cardRefs.current.filter(Boolean),
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          stagger: 0.12,
-          ease: "power3.out",
-          delay: 0.2,
-        }
+        headerRef.current,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: sectionRef.current, start: "top 85%" } }
       );
 
-      // Floating particles animation (pakai state particles yang sudah aman)
-      const particleElements = document.querySelectorAll(".particle");
-      particleElements.forEach((particle, i) => {
-        gsap.to(particle, {
-          y: -20 + Math.random() * 40,
-          x: -10 + Math.random() * 20,
-          duration: 3 + Math.random() * 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.3,
-        });
-      });
+      // Cards staggered animation
+      gsap.fromTo(
+        cardsRef.current.filter(Boolean),
+        { opacity: 0, y: 30, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(0.8)", scrollTrigger: { trigger: ".contact-grid", start: "top 85%" } }
+      );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // ✨ Copy email to clipboard
-  const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText("nafismuhammad277@gmail.com");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      
-      // Small animation feedback
-      gsap.fromTo(
-        ".copy-feedback",
-        { scale: 0.5, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.2, ease: "back.out" }
-      );
-    } catch (err) {
-      console.error("Failed to copy:", err);
+  const getAccentStyles = (accent: string) => {
+    switch (accent) {
+      case "blue":
+        return "border-[#6B9FBF]/20 group-hover:border-[#6B9FBF] group-hover:shadow-[#6B9FBF]/10";
+      case "coral":
+        return "border-[#B06C6C]/20 group-hover:border-[#B06C6C] group-hover:shadow-[#B06C6C]/10";
+      case "green":
+        return "border-[#6B9F6B]/20 group-hover:border-[#6B9F6B] group-hover:shadow-[#6B9F6B]/10";
+      default:
+        return "border-white/10 group-hover:border-white/30";
+    }
+  };
+
+  const getIconBg = (accent: string) => {
+    switch (accent) {
+      case "blue":
+        return "bg-[#6B9FBF]/10 text-[#6B9FBF]";
+      case "coral":
+        return "bg-[#B06C6C]/10 text-[#B06C6C]";
+      case "green":
+        return "bg-[#6B9F6B]/10 text-[#6B9F6B]";
+      default:
+        return "bg-white/5 text-gray-400";
     }
   };
 
@@ -138,175 +136,123 @@ const ContactSection = () => {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-[#1A1A1A] py-20 scroll-mt-24"
-      style={{
-        backgroundImage: `
-          radial-gradient(circle at 20% 30%, rgba(74, 107, 127, 0.08) 0%, transparent 40%),
-          radial-gradient(circle at 80% 70%, rgba(139, 76, 76, 0.08) 0%, transparent 40%),
-          repeating-linear-gradient(45deg, rgba(44, 44, 44, 0.15) 0px, rgba(44, 44, 44, 0.15) 2px, transparent 2px, transparent 6px)
-        `
-      }}
+      className="relative py-24 px-4 md:px-8 bg-[#121212] scroll-mt-20 overflow-hidden"
     >
-      {/* Overlay gelap lembut */}
-      <div className="absolute inset-0 bg-black/20 z-0" />
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
 
-      {/* ========== BACKGROUND ELEMENTS ========== */}
-      
-      {/* Grid overlay - OMORI style */}
-      <div 
-        className="absolute inset-0 opacity-[0.08] pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(74, 107, 127, 0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(74, 107, 127, 0.15) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      {/* Floating particles - OMORI style */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {particles.map((particle, i) => (
-          <div
-            key={i}
-            className="particle absolute w-1.5 h-1.5 rounded-full"
-            style={{
-              top: particle.top,
-              left: particle.left,
-              animationDelay: particle.delay,
-              backgroundColor: i % 2 === 0 ? '#6B9FBF' : '#B06C6C',
-              opacity: 0.15,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Decorative corner accents - OMORI style */}
-      <div className="absolute top-20 left-10 w-32 h-32 border-2 border-[#4A6B7F]/20 rounded-full blur-sm" />
-      <div className="absolute bottom-20 right-10 w-40 h-40 border-2 border-[#8B4C4C]/20 rounded-full blur-sm" />
-
-      {/* ========== CONTENT ========== */}
-      
-      <div className="relative z-10 max-w-5xl mx-auto px-4">
-        {/* Header - OMORI style */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#232323] border-2 border-[#4A6B7F] shadow-[4px_4px_0px_#1E2C36] rounded-full mb-6">
-            <div className="w-2 h-2 rounded-full bg-[#8FC5F0] animate-pulse shadow-[0_0_8px_#8FC5F0]" />
-            <span className="text-xs font-medium text-white drop-shadow-[1px_1px_0px_#000000]">Available for opportunities</span>
+      <div className="relative z-10 max-w-5xl mx-auto">
+        {/* ========== HEADER ========== */}
+        <div ref={headerRef} className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6B9FBF] opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6B9FBF]" />
+            </span>
+            <span className="text-[11px] font-mono text-gray-400 tracking-wide">GET IN TOUCH</span>
           </div>
-          
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-[4px_4px_0px_#000000]">
-            Let's Connect! 👋
+
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
+            Let's Work Together
           </h2>
-          <p className="text-[#F0F0F0] text-lg max-w-2xl mx-auto leading-relaxed drop-shadow-[2px_2px_0px_#000000]">
-            Punya proyek menarik, pertanyaan, atau sekadar ingin menyapa? 
-            Saya selalu terbuka untuk diskusi dan kolaborasi.
+          <p className="text-gray-400 text-sm max-w-md mx-auto">
+            Interested in collaborating? Reach out and let's create something great.
           </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-[#6B9FBF]/50 via-[#B06C6C]/50 to-[#6B9FBF]/50 mx-auto mt-6 rounded-full" />
+          <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-5 rounded-full" />
         </div>
 
-        {/* Contact Cards Grid - OMORI style */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+        {/* ========== CONTACT GRID ========== */}
+        <div className="contact-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {contactMethods.map((method, index) => {
             const Icon = method.icon;
             return (
               <a
                 key={index}
                 ref={(el) => {
-                  cardRefs.current[index] = el;
+                  cardsRef.current[index] = el;
                 }}
                 href={method.action}
-                target={method.external ? "_blank" : undefined}
-                rel={method.external ? "noopener noreferrer" : undefined}
-                className="group relative bg-[#232323] border-2 border-[#3A3A3A] shadow-[6px_6px_0px_#1E2C36] rounded-2xl p-5 
-                  transition-all duration-300 hover:shadow-[8px_8px_0px_#1E2C36] hover:-translate-y-1
-                  flex items-center gap-4 cursor-pointer
-                  hover:border-[#4A6B7F]"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group relative bg-[#1A1A1A] border rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${getAccentStyles(method.accent)}`}
               >
-                {/* Icon Container - OMORI style */}
-                <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${method.color} border-2 
-                  flex items-center justify-center group-hover:scale-110 transition-transform duration-300
-                  shadow-[2px_2px_0px_#1E2C36]`}
-                >
-                  <Icon className="w-6 h-6" />
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className={`p-3 rounded-xl ${getIconBg(method.accent)} transition-all duration-300 group-hover:scale-110`}>
+                    <Icon size={22} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">{method.label}</p>
+                    <p className="text-sm font-medium text-white">{method.value}</p>
+                  </div>
+                  <ExternalLink size={12} className="text-gray-600 group-hover:text-gray-400 transition-colors absolute top-4 right-4" />
                 </div>
-
-                {/* Text Content - OMORI style */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-[#C0C0C0] uppercase tracking-wide drop-shadow-[1px_1px_0px_#000000]">
-                    {method.label}
-                  </p>
-                  <p className="text-sm font-semibold text-white truncate mt-0.5 drop-shadow-[2px_2px_0px_#000000]">
-                    {method.value}
-                  </p>
-                </div>
-
-                {/* External Link Icon */}
-                {method.external && (
-                  <ExternalLink className="w-4 h-4 text-[#C0C0C0] group-hover:text-white transition-colors" />
-                )}
-
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-[#6B9FBF]/5 to-transparent 
-                  opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" 
-                />
               </a>
             );
           })}
         </div>
 
-        {/* Email Copy Section - OMORI style */}
-        <div 
+        {/* ========== EMAIL CARD (Featured) ========== */}
+        <div
           ref={(el) => {
-            cardRefs.current[contactMethods.length] = el;
+            cardsRef.current[contactMethods.length] = el;
           }}
-          className="bg-[#232323] border-2 border-[#3A3A3A] shadow-[6px_6px_0px_#1E2C36] rounded-2xl p-6 
-            flex flex-col sm:flex-row items-center justify-between gap-4 hover:shadow-[8px_8px_0px_#1E2C36] transition-all duration-300"
+          className="relative bg-gradient-to-r from-[#1A1A1A] to-[#1E1E1E] border border-white/10 rounded-2xl overflow-hidden mb-8"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#2C2C2C] border-2 border-[#4A6B7F] text-[#8FC5F0] flex items-center justify-center shadow-[2px_2px_0px_#1E2C36]">
-              <Mail className="w-6 h-6" />
+          {/* Decorative accent bar */}
+          <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#6B9FBF] to-transparent" />
+
+          <div className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-[#6B9FBF]/10 rounded-xl">
+                <Mail size={24} className="text-[#6B9FBF]" />
+              </div>
+              <div>
+                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Direct Email</p>
+                <p className="text-sm font-mono text-white font-medium">nafismuhammad277@gmail.com</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-medium text-[#C0C0C0] uppercase tracking-wide drop-shadow-[1px_1px_0px_#000000]">
-                Direct Email
-              </p>
-              <p className="text-sm font-mono font-semibold text-white drop-shadow-[2px_2px_0px_#000000]">
-                nafismuhammad277@gmail.com
-              </p>
-            </div>
+
+            <button
+              onClick={handleCopyEmail}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 group"
+            >
+              {copied ? (
+                <>
+                  <Check size={16} className="text-[#6B9FBF]" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={16} className="group-hover:text-[#6B9FBF] transition-colors" />
+                  <span>Copy Email</span>
+                </>
+              )}
+            </button>
           </div>
-
-          <button
-            onClick={handleCopyEmail}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#2C2C2C] border-2 border-[#4A6B7F] text-white 
-              rounded-xl font-medium text-sm hover:bg-[#3A3A3A] hover:border-[#6B9FBF] 
-              transition-all duration-200 shadow-[4px_4px_0px_#1E2C36] hover:shadow-[6px_6px_0px_#1E2C36] hover:-translate-y-1 active:translate-y-0"
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 text-[#8FC5F0]" />
-                <span className="copy-feedback">Tersalin!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                <span>Salin Email</span>
-              </>
-            )}
-          </button>
         </div>
 
-        {/* Footer Note - OMORI style */}
-        <div className="text-center mt-10">
-          <p className="text-sm text-[#C0C0C0] drop-shadow-[1px_1px_0px_#000000]">
-            📍 Based in Indonesia • 🕐 Response time: ~24 hours
-          </p>
+        {/* ========== FOOTER INFO ========== */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-center">
+          <div className="flex items-center gap-2 text-gray-500 text-xs">
+            <MapPin size={14} className="text-[#6B9FBF]" />
+            <span>Indonesia</span>
+          </div>
+          <div className="w-1 h-1 rounded-full bg-gray-700 hidden sm:block" />
+          <div className="flex items-center gap-2 text-gray-500 text-xs">
+            <Clock size={14} className="text-[#6B9FBF]" />
+            <span>WIB (UTC+7)</span>
+          </div>
+          <div className="w-1 h-1 rounded-full bg-gray-700 hidden sm:block" />
+          <div className="flex items-center gap-2 text-gray-500 text-xs">
+            <span>📧 Response: ~24h</span>
+          </div>
         </div>
+
+        {/* Response note */}
+        <p className="text-center text-[11px] text-gray-600 mt-6">
+          Open for freelance, collaboration, and full-time opportunities.
+        </p>
       </div>
-
-      {/* Garis pemisah bawah - OMORI style */}
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B9FBF]/30 via-[#B06C6C]/30 to-[#6B9FBF]/30"></div>
     </section>
   );
 };

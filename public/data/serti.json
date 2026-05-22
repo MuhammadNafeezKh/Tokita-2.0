@@ -80,17 +80,41 @@
       "image": "/data/img-ser/UNESA.png",
       "link": "https://example.com",
       "description": "Full Stack Web Development"
+    },{
+      "id": 10,
+      "title": "English Certificate",
+      "issuer": "DBS Foundation & TBI",
+      "date": "2026",
+      "image": "/data/img-ser/edbs.png",
+      "link": "https://example.com",
+      "description": "sertifikat bahasa inggris untuk komunikasi bisnis"
     }
   ],
   "prestasi": [
     {
-      "id": 10,
+      "id": 11,
       "title": "ASEAN Data Science Explorer",
       "issuer": "ASEAN Foundation",
       "date": "2024",
       "image": "/data/img-ser/adse.png",
       "link": "https://example.com",
       "description": "Data Science Competition"
+    }, {
+      "id": 12,
+      "title": "FullStack Web Developer",
+      "issuer": "DBS Foundation Dicoding Camp",
+      "date": "2026",
+      "image": "/data/img-ser/dbs.png",
+      "link": "https://example.com",
+      "description": "Full Stack Web Development using React and Express"
+    }, {
+      "id": 13,
+      "title": "FullStack Web Developer Graduation",
+      "issuer": "DBS Foundation Dicoding Camp",
+      "date": "2026",
+      "image": "/data/img-ser/gdbs.png",
+      "link": "https://example.com",
+      "description": "Menyelesaikan Program Studi 5 bulan bootcamp terkait React dan Express"
     }
   ]
 }

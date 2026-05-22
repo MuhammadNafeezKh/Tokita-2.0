@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ExternalLink, Github, Star, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { ExternalLink, Github, Star, ChevronLeft, ChevronRight, X, Loader2, FolderGit2 } from "lucide-react";
 import Image from "next/image";
 
-// ✅ Import JSON - path sesuai request
+// ✅ Import JSON
 import projectsData from "../../public/data/project.json";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ✅ Tipe data untuk project
+// ✅ Tipe data
 interface Project {
   id: number;
   title: string;
@@ -26,7 +26,16 @@ interface Project {
   year: number;
 }
 
-// ✅ Modal Component - OMORI style
+// ✅ Status configuration
+const STATUS_CONFIG = {
+  live: { label: "LIVE", color: "text-emerald-400 border-emerald-500/50 bg-emerald-500/10" },
+  wip: { label: "WIP", color: "text-amber-400 border-amber-500/50 bg-amber-500/10" },
+  archive: { label: "ARCHIVE", color: "text-gray-400 border-gray-500/50 bg-gray-500/10" },
+} as const;
+
+// ============================================================================
+// MODAL COMPONENT
+// ============================================================================
 const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -36,107 +45,91 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
     };
     window.addEventListener("keydown", handleEsc);
     document.body.style.overflow = "hidden";
+
+    if (modalRef.current) {
+      gsap.fromTo(modalRef.current, { opacity: 0, scale: 0.96, y: 16 }, { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" });
+    }
+
     return () => {
       window.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "unset";
     };
   }, [onClose]);
 
-  useEffect(() => {
-    if (modalRef.current) {
-      gsap.fromTo(
-        modalRef.current,
-        { opacity: 0, scale: 0.95, y: 20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" }
-      );
-    }
-  }, []);
-
-  const statusConfig = {
-    live: { label: "🟢 Live", color: "text-green-400" },
-    wip: { label: "🟡 WIP", color: "text-amber-400" },
-    archive: { label: "⚪ Archive", color: "text-gray-400" },
-  };
-
   return (
-    <div 
-      className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+    <div
+      className="fixed inset-0 z-[10000] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 transition-all"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
     >
-      <div 
+      <div
         ref={modalRef}
-        className="relative bg-[#232323] border-2 border-[#4A6B7F] shadow-[8px_8px_0px_#1E2C36] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="relative bg-[#1E1E1E] border border-[#3A3A3A] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Image */}
-        <div className="relative h-60">
-          <Image src={project.image} alt={project.title} fill className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-          
+        <div className="relative h-56 bg-gradient-to-b from-transparent to-[#1E1E1E]">
+          <Image src={project.image} alt={project.title} fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E1E1E] via-[#1E1E1E]/60 to-transparent" />
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-[#2C2C2C] border border-[#4A6B7F] rounded-full hover:bg-[#3A3A3A] transition-colors z-10"
-            aria-label="Close modal"
+            className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-sm border border-white/10 rounded-full hover:bg-white/10 transition-colors z-10"
+            aria-label="Close"
           >
-            <X size={20} className="text-white" />
+            <X size={18} className="text-white" />
           </button>
-          
-          <div className="absolute bottom-4 left-5 right-5 z-10">
-            <div className="flex items-center gap-2 mb-2">
-              <span className={`text-xs font-semibold ${statusConfig[project.status].color} drop-shadow-[1px_1px_0px_#000000]`}>
-                {statusConfig[project.status].label}
+
+          <div className="absolute bottom-4 left-6 right-6 z-10">
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${STATUS_CONFIG[project.status].color}`}>
+                {STATUS_CONFIG[project.status].label}
               </span>
               {project.featured && (
-                <span className="text-xs font-semibold text-amber-400 flex items-center gap-1 drop-shadow-[1px_1px_0px_#000000]">
-                  <Star size={10} fill="currentColor" /> Featured
+                <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
+                  <Star size={12} fill="currentColor" /> Featured
                 </span>
               )}
-              <span className="text-xs text-white/90 ml-auto drop-shadow-[1px_1px_0px_#000000]">{project.year}</span>
+              <span className="text-xs text-gray-400 ml-auto">{project.year}</span>
             </div>
-            <h3 id="modal-title" className="text-xl font-bold text-white drop-shadow-[2px_2px_0px_#000000]">
-              {project.title}
-            </h3>
+            <h3 className="text-xl font-bold text-white tracking-tight">{project.title}</h3>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
-          <p className="text-[#F0F0F0] mb-6 leading-relaxed drop-shadow-[1px_1px_0px_#000000]">{project.longDesc}</p>
+        <div className="p-6 overflow-y-auto max-h-[55vh] space-y-5">
+          <p className="text-gray-300 leading-relaxed text-sm">{project.longDesc}</p>
 
           {/* Tech Stack */}
-          <div className="mb-6">
-            <h4 className="text-sm font-semibold text-white mb-3 drop-shadow-[2px_2px_0px_#000000]">Tech Stack</h4>
+          <div>
+            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Technologies</h4>
             <div className="flex flex-wrap gap-2">
               {project.tags.map((tag, i) => (
-                <span key={i} className="px-3 py-1.5 bg-[#2C2C2C] border border-[#4A6B7F] text-white text-xs font-medium rounded-lg shadow-[2px_2px_0px_#1E2C36]">
+                <span key={i} className="px-3 py-1.5 bg-[#2A2A2A] border border-[#3A3A3A] text-gray-300 text-xs font-mono rounded-lg">
                   {tag}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Actions - OMORI style */}
-          <div className="flex gap-3 pt-4 border-t border-[#4A6B7F]/30">
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#2C2C2C] border-2 border-[#4A6B7F] text-white font-semibold rounded-xl hover:bg-[#3A3A3A] hover:border-[#6B9FBF] transition-colors shadow-[4px_4px_0px_#1E2C36] hover:shadow-[6px_6px_0px_#1E2C36] hover:translate-y-[-2px]"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#333] hover:border-[#4A6B7F] transition-all"
             >
-              <Github size={18} className="text-[#8FC5F0]" />
-              View Code
+              <Github size={16} /> Repository
             </a>
             <a
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#2C2C2C] border-2 border-[#B06C6C] text-white font-semibold rounded-xl hover:bg-[#3A3A3A] hover:border-[#F08B8B] transition-colors shadow-[4px_4px_0px_#5C3A3A] hover:shadow-[6px_6px_0px_#5C3A3A] hover:translate-y-[-2px]"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#333] hover:border-[#B06C6C] transition-all"
             >
-              <ExternalLink size={18} className="text-[#F08B8B]" />
-              Live Demo
+              <ExternalLink size={16} /> Live Demo
             </a>
           </div>
         </div>
@@ -145,22 +138,26 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
   );
 };
 
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 const Projects = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "live" | "featured">("all");
+  const [filter, setFilter] = useState<"all" | "featured" | "live">("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const ITEMS_PER_PAGE = 3;
 
-  // Load projects dari JSON
+  // Load data
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        const response = await fetch("/data/project.json");
-        const data: Project[] = await response.json();
+        const res = await fetch("/data/project.json");
+        const data = await res.json();
         setProjects(data);
       } catch {
         setProjects(projectsData as Project[]);
@@ -171,35 +168,7 @@ const Projects = () => {
     loadProjects();
   }, []);
 
-  // GSAP Animations
-  useEffect(() => {
-    if (loading) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".projects-title",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: sectionRef.current, start: "top 85%" } }
-      );
-
-      gsap.fromTo(
-        ".project-card",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power2.out", scrollTrigger: { trigger: ".projects-grid", start: "top 85%" } }
-      );
-
-      // Animasi saat ganti halaman
-      gsap.fromTo(
-        ".project-card",
-        { opacity: 0.7, y: 20 },
-        { opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power2.out" }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [loading, currentPage, filter]);
-
-  // Filter + Pagination logic
+  // Filter + sort
   const filteredProjects = useMemo(() => {
     let result = [...projects];
     if (filter === "featured") result = result.filter(p => p.featured);
@@ -212,34 +181,39 @@ const Projects = () => {
   }, [projects, filter]);
 
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
-  const paginatedProjects = filteredProjects.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const paginatedProjects = filteredProjects.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  // Reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
 
-  const handlePageChange = (page: number) => {
+  // Pagination handler
+  const handlePageChange = useCallback((page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
-      document.querySelector(".projects-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
+  }, [totalPages]);
 
-  const statusConfig = {
-    live: { label: "Live", color: "bg-[#1E2C36] text-[#8FC5F0] border-[#8FC5F0]" },
-    wip: { label: "WIP", color: "bg-[#2C2C2C] text-[#F08B8B] border-[#F08B8B]" },
-    archive: { label: "Archive", color: "bg-[#2C2C2C] text-gray-400 border-gray-600" },
-  };
+  // GSAP Animations
+  useEffect(() => {
+    if (loading) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".projects-title", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: sectionRef.current, start: "top 85%" } });
+      gsap.fromTo(".project-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out", scrollTrigger: { trigger: ".projects-grid", start: "top 85%" } });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [loading, currentPage, filter]);
 
   if (loading) {
     return (
-      <section className="min-h-[60vh] flex items-center justify-center bg-[#1A1A1A]">
+      <section className="min-h-[50vh] flex items-center justify-center bg-[#121212]">
         <div className="text-center">
-          <Loader2 className="animate-spin mx-auto mb-3 text-[#8FC5F0]" size={32} />
-          <p className="text-white text-sm drop-shadow-[1px_1px_0px_#000000]">Loading projects...</p>
+          <Loader2 className="animate-spin mx-auto mb-3 text-[#6B9FBF]" size={28} />
+          <p className="text-gray-400 text-sm">Loading projects...</p>
         </div>
       </section>
     );
@@ -249,44 +223,38 @@ const Projects = () => {
     <section
       id="projects"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-6 md:px-16 bg-[#1A1A1A] overflow-hidden"
-      style={{
-        backgroundImage: `
-          radial-gradient(circle at 20% 30%, rgba(74, 107, 127, 0.08) 0%, transparent 40%),
-          radial-gradient(circle at 80% 70%, rgba(139, 76, 76, 0.08) 0%, transparent 40%),
-          repeating-linear-gradient(45deg, rgba(44, 44, 44, 0.15) 0px, rgba(44, 44, 44, 0.15) 2px, transparent 2px, transparent 6px)
-        `
-      }}
+      className="relative py-24 px-4 md:px-8 bg-[#121212]"
     >
-      {/* Overlay gelap lembut */}
-      <div className="absolute inset-0 bg-black/20 z-0" />
-
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header - OMORI style */}
-        <div className="text-center mb-10">
-          <h2 className="projects-title text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-[4px_4px_0px_#000000]">
-            Projects
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-4">
+            <FolderGit2 size={14} className="text-[#6B9FBF]" />
+            <span className="text-xs font-medium text-gray-300 tracking-wide">PORTFOLIO</span>
+          </div>
+          <h2 className="projects-title text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
+            Featured Projects
           </h2>
-          <p className="text-[#F0F0F0] text-sm mt-2 max-w-xl mx-auto drop-shadow-[2px_2px_0px_#000000]">
-            Selected work showcasing front-end development and problem-solving.
+          <p className="text-gray-400 text-sm max-w-md mx-auto">
+            A collection of my best work in web development
           </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-[#6B9FBF]/50 via-[#B06C6C]/50 to-[#6B9FBF]/50 mx-auto mt-4 rounded-full" />
+          <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-5 rounded-full" />
         </div>
 
-        {/* Filters - OMORI style */}
+        {/* Filters */}
         <div className="flex justify-center gap-2 mb-10">
           {[
-            { key: "all", label: "All" },
+            { key: "all", label: "All Projects" },
             { key: "featured", label: "⭐ Featured" },
-            { key: "live", label: "🚀 Live" },
+            { key: "live", label: "🔗 Live Only" },
           ].map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key as typeof filter)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 shadow-[2px_2px_0px_#1E2C36] ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 filter === f.key
-                  ? "bg-[#2C2C2C] border-2 border-[#6B9FBF] text-white"
-                  : "bg-[#232323] border-2 border-[#3A3A3A] text-[#F0F0F0] hover:bg-[#2C2C2C] hover:border-[#4A6B7F]"
+                  ? "bg-white/10 border border-white/20 text-white"
+                  : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
               }`}
             >
               {f.label}
@@ -295,16 +263,16 @@ const Projects = () => {
         </div>
 
         {/* Projects Grid */}
-        <div className="projects-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div ref={gridRef} className="projects-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedProjects.map((project) => {
-            const status = statusConfig[project.status];
+            const status = STATUS_CONFIG[project.status];
             return (
               <article
                 key={project.id}
-                className="project-card group bg-[#232323]/90 border border-[#3A3A3A] shadow-[6px_6px_0px_#1E2C36] rounded-2xl overflow-hidden hover:shadow-[8px_8px_0px_#1E2C36] hover:translate-y-[-2px] transition-all duration-300"
+                className="project-card group bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl overflow-hidden hover:border-[#3A3A3A] hover:shadow-xl transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-52 overflow-hidden">
+                <div className="relative h-48 overflow-hidden bg-[#0D0D0D]">
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -312,73 +280,70 @@ const Projects = () => {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
-                  {/* Hover overlay - OMORI style */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-4 left-4 right-4 flex gap-3">
+                  {/* Hover Actions */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="flex gap-2">
                       <a
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 bg-[#2C2C2C] border border-[#4A6B7F] py-2.5 rounded-xl text-white text-sm font-semibold hover:bg-[#3A3A3A] transition-colors shadow-[2px_2px_0px_#1E2C36]"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-black/90 transition-colors"
                       >
-                        <Github size={16} className="text-[#8FC5F0]" />
-                        Code
+                        <Github size={12} /> Code
                       </a>
                       <a
                         href={project.demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 bg-[#2C2C2C] border border-[#B06C6C] py-2.5 rounded-xl text-white text-sm font-semibold hover:bg-[#3A3A3A] transition-colors shadow-[2px_2px_0px_#5C3A3A]"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-black/90 transition-colors"
                       >
-                        <ExternalLink size={16} className="text-[#F08B8B]" />
-                        Demo
+                        <ExternalLink size={12} /> Demo
                       </a>
                     </div>
                   </div>
 
-                  {/* Badges - OMORI style */}
-                  <div className="absolute top-3 left-3 flex gap-2 z-10">
+                  {/* Badges */}
+                  <div className="absolute top-3 left-3 flex gap-2">
                     {project.featured && (
-                      <span className="px-2.5 py-1 bg-[#2C2C2C] border border-amber-500 text-amber-400 text-xs font-bold rounded-full flex items-center gap-1 shadow-[2px_2px_0px_#000000]">
-                        <Star size={10} fill="currentColor" />
+                      <span className="px-2 py-0.5 bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 text-amber-400 text-[10px] font-bold rounded-full flex items-center gap-1">
+                        <Star size={10} fill="currentColor" /> Featured
                       </span>
                     )}
-                    <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${status.color} bg-[#232323] shadow-[2px_2px_0px_#000000]`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full backdrop-blur-sm border ${status.color}`}>
                       {status.label}
                     </span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-white text-base leading-tight drop-shadow-[2px_2px_0px_#000000]">
-                      {project.title}
-                    </h3>
-                    <span className="text-xs text-[#C0C0C0] font-medium drop-shadow-[1px_1px_0px_#000000]">{project.year}</span>
+                <div className="p-5">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-white text-base tracking-tight">{project.title}</h3>
+                    <span className="text-[11px] text-gray-500 font-mono">{project.year}</span>
                   </div>
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.shortDesc}</p>
                   
-                  <p className="text-[#F0F0F0] text-sm mb-4 line-clamp-2 min-h-[40px] drop-shadow-[1px_1px_0px_#000000]">
-                    {project.shortDesc}
-                  </p>
-                  
-                  {/* Tags - OMORI style */}
-                  <div className="flex flex-wrap gap-2 mb-5">
-                    {project.tags.slice(0, 4).map((tag, i) => (
-                      <span key={i} className="px-3 py-1 bg-[#2C2C2C] border border-[#4A6B7F] text-white text-xs font-medium rounded-lg shadow-[2px_2px_0px_#1E2C36]">
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {project.tags.slice(0, 3).map((tag, i) => (
+                      <span key={i} className="px-2 py-0.5 bg-white/5 border border-white/5 text-gray-300 text-[10px] font-mono rounded-md">
                         {tag}
                       </span>
                     ))}
+                    {project.tags.length > 3 && (
+                      <span className="px-2 py-0.5 text-gray-500 text-[10px]">+{project.tags.length - 3}</span>
+                    )}
                   </div>
 
-                  {/* View Details - OMORI style */}
+                  {/* Details Button */}
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="w-full flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-white bg-[#2C2C2C] border border-[#4A6B7F] rounded-xl hover:bg-[#3A3A3A] hover:border-[#6B9FBF] transition-colors shadow-[2px_2px_0px_#1E2C36]"
+                    className="w-full flex items-center justify-center gap-1 py-2 text-sm font-medium text-gray-300 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 hover:text-white transition-all"
                   >
-                    View details
-                    <ChevronRight size={14} className="text-[#8FC5F0]" />
+                    View Details
+                    <ChevronRight size={14} />
                   </button>
                 </div>
               </article>
@@ -386,85 +351,57 @@ const Projects = () => {
           })}
         </div>
 
-        {/* Pagination Controls - OMORI style */}
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-12">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2.5 rounded-xl bg-[#232323] border border-[#3A3A3A] text-white hover:bg-[#2C2C2C] hover:border-[#4A6B7F] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[2px_2px_0px_#1E2C36]"
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            
-            <div className="flex gap-1.5">
+          <div className="flex flex-col items-center gap-3 mt-10">
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg bg-white/5 border border-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all"
+              >
+                <ChevronLeft size={16} />
+              </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`w-9 h-9 rounded-xl text-sm font-semibold transition-all shadow-[2px_2px_0px_#1E2C36] ${
+                  className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
                     currentPage === page
-                      ? "bg-[#2C2C2C] border-2 border-[#6B9FBF] text-white"
-                      : "bg-[#232323] border border-[#3A3A3A] text-[#F0F0F0] hover:bg-[#2C2C2C] hover:border-[#4A6B7F]"
+                      ? "bg-white/10 border border-white/20 text-white"
+                      : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
                   }`}
-                  aria-label={`Page ${page}`}
-                  aria-current={currentPage === page ? "page" : undefined}
                 >
                   {page}
                 </button>
               ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg bg-white/5 border border-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
-            
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2.5 rounded-xl bg-[#232323] border border-[#3A3A3A] text-white hover:bg-[#2C2C2C] hover:border-[#4A6B7F] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[2px_2px_0px_#1E2C36]"
-              aria-label="Next page"
-            >
-              <ChevronRight size={18} />
-            </button>
+            <p className="text-xs text-gray-500">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredProjects.length)} of {filteredProjects.length} projects
+            </p>
           </div>
         )}
 
-        {/* Page indicator - OMORI style */}
-        {totalPages > 1 && (
-          <p className="text-center text-[#C0C0C0] text-xs mt-4 drop-shadow-[1px_1px_0px_#000000]">
-            Page {currentPage} of {totalPages} • {filteredProjects.length} projects
-          </p>
-        )}
-
-        {/* Empty state - OMORI style */}
+        {/* Empty State */}
         {filteredProjects.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-[#F0F0F0]/80 text-sm drop-shadow-[1px_1px_0px_#000000]">No projects match this filter.</p>
-            <button
-              onClick={() => setFilter("all")}
-              className="mt-4 text-white text-sm font-semibold hover:text-[#8FC5F0] transition-colors drop-shadow-[2px_2px_0px_#000000]"
-            >
-              Reset filters
+            <p className="text-gray-400 text-sm">No projects found for this filter.</p>
+            <button onClick={() => setFilter("all")} className="mt-3 text-sm text-[#6B9FBF] hover:text-white transition-colors">
+              View all projects →
             </button>
           </div>
         )}
       </div>
 
       {/* Modal */}
-      {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-      )}
-
-      {/* Garis pemisah bawah - OMORI style */}
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B9FBF]/30 via-[#B06C6C]/30 to-[#6B9FBF]/30"></div>
-
-      {/* Utilities CSS */}
-      <style>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
+      {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
     </section>
   );
 };

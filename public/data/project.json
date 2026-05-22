@@ -12,21 +12,9 @@
     "demo": "https://muhammadnafeezkh.github.io/PasswordGenerator/",
     "year": 2024
   },
+  
   {
     "id": 2,
-    "title": "ID Card Portfolio",
-    "shortDesc": "Creative ID card style personal portfolio",
-    "longDesc": "A unique portfolio concept designed as a digital ID card. Showcases personal information and skills in a compact, visually engaging format using pure CSS animations.",
-    "tags": ["HTML5", "CSS3", "Responsive"],
-    "status": "live",
-    "featured": false,
-    "image": "/id.png",
-    "github": "https://github.com/MuhammadNafeezKh/ID-card",
-    "demo": "https://id-card-dun.vercel.app/",
-    "year": 2025
-  },
-  {
-    "id": 3,
     "title": "TokiList",
     "shortDesc": "Anime season tracker using REST API",
     "longDesc": "My first API integration project! Fetches and displays currently airing and seasonal anime using the Jikan API. Features search, filtering, and responsive card layout.",
@@ -39,7 +27,7 @@
     "year": 2025
   },
 {
-  "id": 4,
+  "id": 3,
   "title": "Bookshelf App",
   "shortDesc": "Personal book tracker with Local Storage persistence",
   "longDesc": "A simple bookshelf application that allows users to manage their reading list. Add books with title, author, and year; mark them as read or unread; and delete entries. All data is stored locally in the browser using Local Storage, so no backend or login required. Built with vanilla JavaScript to practice DOM manipulation and data persistence.",
@@ -52,7 +40,7 @@
   "year": 2026
 },
 {
-  "id": 5,
+  "id": 4,
   "title": "FinSmart",
   "shortDesc": "Personal tracker financial",
   "longDesc": "Sebuah Website sebagai tracker finansial terutama bagi GenZ yang mudah sekali membeli hal yang hedon, ini merupakan Capstone dari DBS Dicoding Camp di dibantu oleh teman-teman CFS.",
@@ -63,5 +51,31 @@
   "github": "https://github.com/IvanoWisnuBudiLaras/CAPSTONE",
   "demo": "https://finsmart-mu.vercel.app/dashboard",
   "year": 2026
+},
+{
+  "id": 5,
+  "title": "VibeAquaria",
+  "shortDesc": "Smart Aquascape Management System",
+  "longDesc": "VibeAquaria adalah platform manajemen akuarium pintar yang menggabungkan estetika visual dengan teknologi Google Gemini AI. Proyek ini dikembangkan khusus sebagai entri untuk kompetisi JuaraVibeCoding 2026 Aplikasi ini dirancang untuk beroperasi menggunakan Gemini API Key. Namun, demi keamanan dan kepatuhan aturan Tanpa API Key di Repositori: Repositori ini TIDAK menyertakan API Key spesifik.",
+  "tags": ["Next.js", "Tailwind", "Firebase", "Framer", "Typescript", "AI Engine "],
+  "status": "live",
+  "featured": true,
+  "image": "/Aqua.png",
+  "github": "https://github.com/Tokitakun/VibeAquaria",
+  "demo": "https://vibe-aquaria.vercel.app/",
+  "year": 2026
+},{
+  "id": 6,
+  "title": "Mahiru ",
+  "shortDesc": "Fan-site untuk my bini tuh ",
+  "longDesc": "Website buatan untuk menjadi bukti bahwa aku sangat mencintai mahiru sehidup semati oomagaa MAHIRU!!.",
+  "tags": ["Next.js", "Tailwind", "Lucide", "Framer", "Typescript", "AI Engine "],
+  "status": "live",
+  "featured": true,
+  "image": "/mahiru.png",
+  "github": "https://github.com/Tokitakun/Mahiru",
+  "demo": "https://mahiru-six.vercel.app/",
+  "year": 2026
 }
+
 ]

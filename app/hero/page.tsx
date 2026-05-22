@@ -201,7 +201,7 @@ export default function Hero() {
           <h2 className="text-3xl md:text-4xl font-semibold text-[#6B9FBF] drop-shadow-[2px_2px_0px_#000000]">I'm Nafis</h2>
           <div ref={socialRef} className="flex justify-center md:justify-start gap-4 pt-2">
             <a href="https://www.instagram.com/_nafietzsche/" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Instagram size={24} className="text-[#C0C0C0] hover:text-white" /></a>
-            <a href="https://github.com/MuhammadNafeezKh" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Github size={24} className="text-[#C0C0C0] hover:text-white" /></a>
+            <a href="https://github.com/Tokitakun" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Github size={24} className="text-[#C0C0C0] hover:text-white" /></a>
             <a href="mailto:nafismuhammad277@gmail.com" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Mail size={24} className="text-[#C0C0C0] hover:text-white" /></a>
             <a href="#contact" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><MessageCircle size={24} className="text-[#C0C0C0] hover:text-white" /></a>
           </div>
