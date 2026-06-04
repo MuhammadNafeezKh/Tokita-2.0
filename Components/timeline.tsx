@@ -90,7 +90,7 @@ const ExperienceTimeline = () => {
     <section
       id="journey"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#121212] overflow-hidden"
+      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] overflow-hidden"
     >
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
@@ -136,14 +136,14 @@ const ExperienceTimeline = () => {
                   {/* Center dot */}
                   <div className="absolute left-1/2 top-6 -translate-x-1/2 z-10">
                     <div className="relative">
-                      <div className="w-3 h-3 rounded-full bg-[#6B9FBF] ring-4 ring-[#1A1A1A] ring-offset-0" />
+                      <div className="w-3 h-3 rounded-full bg-[#6B9FBF] ring-4 ring-[#2D2D2D] ring-offset-0" />
                       <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#6B9FBF] animate-ping opacity-40" />
                     </div>
                   </div>
 
                   {/* Card */}
                   <div className={`w-[calc(100%-3rem)] sm:w-[380px] md:w-[420px] ${isLeft ? "mr-auto pr-8 sm:pr-0" : "ml-auto pl-8 sm:pl-0"}`}>
-                    <div className="group bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:border-[#6B9FBF]/30 hover:shadow-xl transition-all duration-300">
+                    <div className="group bg-[#2D2D2D] border border-white/10 rounded-2xl p-5 hover:border-[#6B9FBF]/30 hover:shadow-xl transition-all duration-300">
                       {/* Date badge */}
                       <div className="flex items-center gap-2 mb-3">
                         <Calendar size={12} className="text-[#6B9FBF]" />
@@ -202,6 +202,9 @@ const ExperienceTimeline = () => {
           </div>
         </div>
       </div>
+
+      {/* GARIS PEMISAH - OMORI style di bagian bawah */}
+      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]"></div>
     </section>
   );
 };

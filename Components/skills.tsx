@@ -147,7 +147,7 @@ const Skills = () => {
     <section
       id="skills"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#121212] overflow-hidden"
+      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] overflow-hidden"
     >
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
@@ -179,7 +179,7 @@ const Skills = () => {
             return (
               <div
                 key={index}
-                className="skill-category-card group bg-[#1A1A1A] border border-white/10 rounded-2xl overflow-hidden hover:border-[#6B9FBF]/30 hover:shadow-xl transition-all duration-300"
+                className="skill-category-card group bg-[#2D2D2D] border border-white/10 rounded-2xl overflow-hidden hover:border-[#6B9FBF]/30 hover:shadow-xl transition-all duration-300"
               >
                 {/* Card Header */}
                 <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5 bg-white/5">
@@ -230,7 +230,7 @@ const Skills = () => {
             {languages.map((lang, index) => (
               <div
                 key={index}
-                className="lang-card flex justify-between items-center bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-2.5 hover:border-[#6B9FBF]/30 hover:bg-white/5 transition-all duration-200"
+                className="lang-card flex justify-between items-center bg-[#2D2D2D] border border-white/10 rounded-xl px-4 py-2.5 hover:border-[#6B9FBF]/30 hover:bg-white/5 transition-all duration-200"
               >
                 <div className="flex items-center gap-2.5">
                   <span className="text-lg">{lang.flag}</span>
@@ -246,6 +246,9 @@ const Skills = () => {
           </div>
         </div>
       </div>
+
+      {/* GARIS PEMISAH - OMORI style di bagian bawah */}
+      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]"></div>
     </section>
   );
 };

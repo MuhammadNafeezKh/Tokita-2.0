@@ -136,7 +136,7 @@ const ContactSection = () => {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#121212] scroll-mt-20 overflow-hidden"
+      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] scroll-mt-20 overflow-hidden"
     >
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
@@ -174,7 +174,7 @@ const ContactSection = () => {
                 href={method.action}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group relative bg-[#1A1A1A] border rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${getAccentStyles(method.accent)}`}
+                className={`group relative bg-[#2D2D2D] border rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${getAccentStyles(method.accent)}`}
               >
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className={`p-3 rounded-xl ${getIconBg(method.accent)} transition-all duration-300 group-hover:scale-110`}>
@@ -196,7 +196,7 @@ const ContactSection = () => {
           ref={(el) => {
             cardsRef.current[contactMethods.length] = el;
           }}
-          className="relative bg-gradient-to-r from-[#1A1A1A] to-[#1E1E1E] border border-white/10 rounded-2xl overflow-hidden mb-8"
+          className="relative bg-gradient-to-r from-[#2D2D2D] to-[#323232] border border-white/10 rounded-2xl overflow-hidden mb-8"
         >
           {/* Decorative accent bar */}
           <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#6B9FBF] to-transparent" />

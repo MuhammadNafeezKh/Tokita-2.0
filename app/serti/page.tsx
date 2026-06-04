@@ -21,6 +21,7 @@ import {
   Calendar,
   Building2,
   FileText,
+  Sparkles,
 } from "lucide-react";
 
 import certificatesData from "../../public/data/serti.json";
@@ -63,9 +64,9 @@ const Alert = ({ message, onClose }: { message: string; onClose: () => void }) =
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-[#2A2A2A]/80 backdrop-blur-sm" />
       <div
-        className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200"
+        className="relative bg-[#2D2D2D] border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -112,7 +113,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-white/5 bg-[#121212]/80 backdrop-blur-sm">
+    <footer className="border-t border-white/5 bg-[#2A2A2A]/80 backdrop-blur-sm relative">
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-500">
@@ -162,7 +163,6 @@ export default function CertificatesPage() {
   useEffect(() => {
     const loadCertificates = async () => {
       try {
-        // Simulate minimum loading time for smooth animation
         await new Promise((resolve) => setTimeout(resolve, 800));
         setCertificates(certificatesData as CertificatesJSON);
       } catch (error) {
@@ -180,21 +180,18 @@ export default function CertificatesPage() {
     if (loading || !certificates) return;
 
     const ctx = gsap.context(() => {
-      // Header animation
       gsap.fromTo(
         headerRef.current,
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }
       );
 
-      // Tabs animation
       gsap.fromTo(
         tabsRef.current,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.5, delay: 0.2, ease: "power2.out" }
       );
 
-      // Cards staggered animation
       gsap.fromTo(
         cardsRef.current.filter(Boolean),
         { opacity: 0, y: 40 },
@@ -227,7 +224,7 @@ export default function CertificatesPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+      <div className="min-h-screen bg-[#2A2A2A] flex items-center justify-center">
         <div className="text-center">
           <div className="flex gap-2 justify-center mb-4">
             <span className="w-2 h-2 rounded-full bg-[#6B9FBF] animate-pulse" />
@@ -242,7 +239,7 @@ export default function CertificatesPage() {
 
   if (!certificates) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+      <div className="min-h-screen bg-[#2A2A2A] flex items-center justify-center">
         <div className="text-center p-6">
           <AlertCircle className="mx-auto mb-4 text-gray-500" size={40} />
           <p className="text-white font-medium mb-2">Failed to load data</p>
@@ -263,7 +260,15 @@ export default function CertificatesPage() {
 
   return (
     <>
-      <div ref={pageRef} className="min-h-screen bg-[#121212]">
+      <div ref={pageRef} className="min-h-screen bg-[#2A2A2A] relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
+        <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-[#6B9FBF]/5 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-[#F08B8B]/5 blur-3xl pointer-events-none" />
+        
+        {/* Top decorative line */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]" />
+
         {/* Content */}
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
           {/* Header */}
@@ -278,13 +283,18 @@ export default function CertificatesPage() {
             </Link>
 
             <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-5">
+                <Sparkles size={12} className="text-[#6B9FBF]" />
+                <span className="text-[11px] font-mono text-gray-400 tracking-wide">MY ACHIEVEMENTS</span>
+                <Sparkles size={12} className="text-[#F08B8B]" />
+              </div>
               <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
                 Certificates & Achievements
               </h1>
               <p className="text-gray-400 text-sm max-w-md mx-auto">
                 A collection of my professional certifications and competition awards
               </p>
-              <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-4 rounded-full" />
+              <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-5 rounded-full" />
             </div>
           </div>
 
@@ -294,7 +304,7 @@ export default function CertificatesPage() {
               onClick={() => setActiveTab("kompetensi")}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 activeTab === "kompetensi"
-                  ? "bg-white/10 border border-white/20 text-white"
+                  ? "bg-white/10 border border-white/20 text-white shadow-lg"
                   : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
               }`}
             >
@@ -305,7 +315,7 @@ export default function CertificatesPage() {
               onClick={() => setActiveTab("prestasi")}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 activeTab === "prestasi"
-                  ? "bg-white/10 border border-white/20 text-white"
+                  ? "bg-white/10 border border-white/20 text-white shadow-lg"
                   : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
               }`}
             >
@@ -314,18 +324,27 @@ export default function CertificatesPage() {
             </button>
           </div>
 
+          {/* Counter Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-[#2D2D2D] border border-white/10 rounded-full px-4 py-1.5">
+              <span className="text-xs text-gray-400">
+                Showing <span className="text-[#6B9FBF] font-semibold">{currentData.length}</span> {activeTab === "kompetensi" ? "certifications" : "achievements"}
+              </span>
+            </div>
+          </div>
+
           {/* Certificates Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentData.map((cert, index) => (
               <div
                 key={cert.id}
                 ref={(el) => {
                   cardsRef.current[index] = el;
                 }}
-                className="group bg-[#1A1A1A] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 hover:shadow-xl transition-all duration-300"
+                className="group bg-[#2D2D2D] border border-white/10 rounded-2xl overflow-hidden hover:border-[#6B9FBF]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden bg-[#0D0D0D]">
+                <div className="relative h-48 overflow-hidden bg-[#232323]">
                   <Image
                     src={cert.image}
                     alt={cert.title}
@@ -333,20 +352,27 @@ export default function CertificatesPage() {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D2D2D] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Date badge */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10">
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#2A2A2A]/80 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10">
                     <Calendar size={10} className="text-gray-400" />
                     <span className="text-[10px] font-mono text-gray-300">{cert.date}</span>
+                  </div>
+
+                  {/* Type badge overlay on hover */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
+                    <div className="bg-[#2D2D2D]/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20">
+                      <span className="text-xs font-medium text-white">Click to view</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-5">
                   <div className="flex items-start gap-2 mb-2">
-                    <Building2 size={14} className="text-gray-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">
+                    <Building2 size={14} className="text-[#6B9FBF] flex-shrink-0 mt-0.5" />
+                    <span className="text-[11px] font-mono text-gray-400 uppercase tracking-wider">
                       {cert.issuer}
                     </span>
                   </div>
@@ -362,17 +388,17 @@ export default function CertificatesPage() {
                   )}
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-3 border-t border-white/5">
+                  <div className="flex gap-2 pt-3 border-t border-white/10">
                     <button
                       onClick={() => handleAction(cert, "view")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white hover:border-[#6B9FBF]/30 transition-all"
                     >
                       <ExternalLink size={12} />
                       View
                     </button>
                     <button
                       onClick={() => handleAction(cert, "download")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white hover:border-[#F08B8B]/30 transition-all"
                     >
                       <Download size={12} />
                       Save
@@ -383,10 +409,10 @@ export default function CertificatesPage() {
             ))}
           </div>
 
-          {/* Empty State */}
+          {/* Empty State with animation */}
           {currentData.length === 0 && (
             <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 border border-white/10 mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 border border-white/10 mb-4 animate-pulse">
                 <FileText size={28} className="text-gray-500" />
               </div>
               <p className="text-white font-medium mb-1">No {activeTab} found</p>
@@ -394,7 +420,13 @@ export default function CertificatesPage() {
             </div>
           )}
         </div>
+
+        {/* Bottom decorative line - OMORI style */}
+        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]" />
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Alert */}
       {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage(null)} />}

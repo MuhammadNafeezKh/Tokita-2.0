@@ -110,7 +110,7 @@ const AudioPlayer = () => {
   if (!tracks.length) return null;
 
   return (
-    <div className="absolute bottom-4 right-4 z-20 bg-black/80 backdrop-blur-sm rounded-xl p-2 border border-[#8B0000]/50 shadow-lg w-64">
+    <div className="absolute bottom-4 right-4 z-20 bg-[#2A2A2A]/80 backdrop-blur-sm rounded-xl p-2 border border-[#8B0000]/50 shadow-lg w-64">
       <div className="flex justify-between items-center text-white text-xs mb-1">
         <span className="text-[#8B0000] font-mono">🎵 Now Playing</span>
         <button onClick={() => setShowPlaylist(!showPlaylist)} className="hover:text-[#8B0000]">
@@ -131,7 +131,7 @@ const AudioPlayer = () => {
         <button onClick={changeSpeed} className="text-white text-[10px] bg-[#8B0000]/30 px-1 rounded">{playbackRate}x</button>
       </div>
       {showPlaylist && (
-        <div className="mt-2 max-h-32 overflow-y-auto bg-black/90 rounded border border-[#8B0000]/30 p-1">
+        <div className="mt-2 max-h-32 overflow-y-auto bg-[#2A2A2A]/90 rounded border border-[#8B0000]/30 p-1">
           {tracks.map((track, idx) => (
             <div key={idx} className={`text-[10px] p-1 cursor-pointer hover:bg-[#8B0000]/30 ${idx === currentIndex ? 'text-[#8B0000] font-bold' : 'text-white'}`} onClick={() => { setCurrentIndex(idx); setIsPlaying(true); setShowPlaylist(false); }}>
               {track.title}
@@ -189,23 +189,23 @@ export default function Hero() {
   const handleCVClick = (e: React.MouseEvent) => { e.preventDefault(); alert("CV belum tersedia, cek nanti ya!"); };
 
   return (
-    <section ref={heroRef} className="relative overflow-hidden min-h-screen bg-[#1A1A1A]" style={{
-      backgroundImage: `radial-gradient(circle at 20% 30%, rgba(74,107,127,0.1) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(107,159,191,0.05) 0%, transparent 40%), repeating-linear-gradient(45deg, rgba(44,44,44,0.2) 0px, rgba(44,44,44,0.2) 2px, transparent 2px, transparent 6px)`
+    <section ref={heroRef} className="relative overflow-hidden min-h-screen bg-[#2A2A2A]" style={{
+      backgroundImage: `radial-gradient(circle at 20% 30%, rgba(74,107,127,0.1) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(107,159,191,0.05) 0%, transparent 40%), repeating-linear-gradient(45deg, rgba(55,55,55,0.2) 0px, rgba(55,55,55,0.2) 2px, transparent 2px, transparent 6px)`
     }}>
-      <div className="absolute inset-0 bg-black/20 z-0" />
+      <div className="absolute inset-0 bg-black/10 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-16 pt-28 md:pt-32 gap-10 min-h-screen">
         <div ref={textRef} className="text-center md:text-left space-y-5 md:w-1/2 z-10">
-          <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight drop-shadow-[2px_2px_0px_#000000] min-h-[5rem]">
+          <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight drop-shadow-[2px_2px_0px_#2A2A2A] min-h-[5rem]">
             {displayText}<span className="inline-block w-0.5 h-8 md:h-10 bg-white ml-1 animate-pulse"></span>
           </h1>
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#6B9FBF] drop-shadow-[2px_2px_0px_#000000]">I'm Nafis</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-[#6B9FBF] drop-shadow-[2px_2px_0px_#2A2A2A]">I'm Nafis</h2>
           <div ref={socialRef} className="flex justify-center md:justify-start gap-4 pt-2">
             <a href="https://www.instagram.com/_nafietzsche/" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Instagram size={24} className="text-[#C0C0C0] hover:text-white" /></a>
             <a href="https://github.com/Tokitakun" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Github size={24} className="text-[#C0C0C0] hover:text-white" /></a>
             <a href="mailto:nafismuhammad277@gmail.com" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><Mail size={24} className="text-[#C0C0C0] hover:text-white" /></a>
             <a href="#contact" className="bg-[#2C2C2C] p-3 rounded-lg border border-[#3A3A3A] hover:border-[#6B9FBF]"><MessageCircle size={24} className="text-[#C0C0C0] hover:text-white" /></a>
           </div>
-          <p className="text-xl md:text-2xl text-[#F0F0F0] drop-shadow-[1px_1px_0px_#000000]">
+          <p className="text-xl md:text-2xl text-[#F0F0F0] drop-shadow-[1px_1px_0px_#2A2A2A]">
             <span className="font-semibold text-[#6B9FBF]">Front End Developer</span> & <span className="font-semibold text-[#B06C6C]">UI/UX Design Enthusiast</span>
           </p>
           <div ref={buttonsRef} className="flex flex-wrap gap-4 justify-center md:justify-start pt-6">

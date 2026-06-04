@@ -58,24 +58,24 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
 
   return (
     <div
-      className="fixed inset-0 z-[10000] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 transition-all"
+      className="fixed inset-0 z-[10000] bg-[#2A2A2A]/85 backdrop-blur-sm flex items-center justify-center p-4 transition-all"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
         ref={modalRef}
-        className="relative bg-[#1E1E1E] border border-[#3A3A3A] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+        className="relative bg-[#2D2D2D] border border-[#3A3A3A] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Image */}
-        <div className="relative h-56 bg-gradient-to-b from-transparent to-[#1E1E1E]">
+        <div className="relative h-56 bg-gradient-to-b from-transparent to-[#2D2D2D]">
           <Image src={project.image} alt={project.title} fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1E1E1E] via-[#1E1E1E]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2D2D2D] via-[#2D2D2D]/60 to-transparent" />
 
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-sm border border-white/10 rounded-full hover:bg-white/10 transition-colors z-10"
+            className="absolute top-4 right-4 p-2 bg-[#2A2A2A]/50 backdrop-blur-sm border border-white/10 rounded-full hover:bg-white/10 transition-colors z-10"
             aria-label="Close"
           >
             <X size={18} className="text-white" />
@@ -119,7 +119,7 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#333] hover:border-[#4A6B7F] transition-all"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#383838] hover:border-[#4A6B7F] transition-all"
             >
               <Github size={16} /> Repository
             </a>
@@ -127,7 +127,7 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#333] hover:border-[#B06C6C] transition-all"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#2A2A2A] border border-[#3A3A3A] text-white text-sm font-medium rounded-xl hover:bg-[#383838] hover:border-[#B06C6C] transition-all"
             >
               <ExternalLink size={16} /> Live Demo
             </a>
@@ -210,7 +210,7 @@ const Projects = () => {
 
   if (loading) {
     return (
-      <section className="min-h-[50vh] flex items-center justify-center bg-[#121212]">
+      <section className="min-h-[50vh] flex items-center justify-center bg-[#2A2A2A]">
         <div className="text-center">
           <Loader2 className="animate-spin mx-auto mb-3 text-[#6B9FBF]" size={28} />
           <p className="text-gray-400 text-sm">Loading projects...</p>
@@ -223,7 +223,7 @@ const Projects = () => {
     <section
       id="projects"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#121212]"
+      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] overflow-hidden"
     >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -269,10 +269,10 @@ const Projects = () => {
             return (
               <article
                 key={project.id}
-                className="project-card group bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl overflow-hidden hover:border-[#3A3A3A] hover:shadow-xl transition-all duration-300"
+                className="project-card group bg-[#2D2D2D] border border-[#3A3A3A] rounded-2xl overflow-hidden hover:border-[#4A4A4A] hover:shadow-xl transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden bg-[#0D0D0D]">
+                <div className="relative h-48 overflow-hidden bg-[#232323]">
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -280,7 +280,7 @@ const Projects = () => {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D2D2D] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Hover Actions */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -289,7 +289,7 @@ const Projects = () => {
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-black/90 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#2A2A2A]/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-[#2A2A2A]/90 transition-colors"
                       >
                         <Github size={12} /> Code
                       </a>
@@ -297,7 +297,7 @@ const Projects = () => {
                         href={project.demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-black/90 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#2A2A2A]/70 backdrop-blur-sm border border-white/10 rounded-lg text-white text-xs font-medium hover:bg-[#2A2A2A]/90 transition-colors"
                       >
                         <ExternalLink size={12} /> Demo
                       </a>
@@ -402,6 +402,9 @@ const Projects = () => {
 
       {/* Modal */}
       {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
+
+      {/* GARIS PEMISAH - OMORI style di bagian bawah */}
+      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]"></div>
     </section>
   );
 };
