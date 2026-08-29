@@ -1,6 +1,6 @@
 [
   {
-    "date": "2024 - Present",
+    "date": "2024 - 2026",
     "title": "SMK TI BAZMA",
     "role": "Siswa & Organisasi",
     "description": "Aktif mengembangkan diri melalui akademik dan organisasi sekolah.",
@@ -8,28 +8,43 @@
       "Anggota OSIS Divisi Keimanan (2024/2025)",
       "Ketua PASO & Sekretaris Eskul Robotik (2025/2026)",
       "Memimpin koordinasi kegiatan keagamaan dan teknis robotik"
-    ]
+    ],
+    "type": "education"
   },
   {
-    "date": "2025 - Present",
-    "title": "NLFTs",
-    "role": "Frontend Developer",
-    "description": "Berkontribusi dalam pengembangan Tampilan produk digital skala nyata.",
+    "date": "Nov 2025 - Sekarang",
+    "title": "NLFTs.ltd",
+    "role": "Frontend Engineer",
+    "description": "Mengembangkan proyek Travellings.id/Docs sebagai Frontend Developer.",
     "details": [
-      "Mengembangkan fitur menggunakan Next.js & React",
-      "Kolaborasi dengan tim desain & backend untuk integrasi API",
-      "Optimasi performa dan UX aplikasi web"
-    ]
+      "Project: Travellings.id/Docs",
+      "Membuat desain responsif dan memastikan fitur berfungsi dengan baik",
+      "Fokus pada pengembangan aplikasi berbasis formulir dan dokumentasi"
+    ],
+    "type": "work"
   },
-    {
-    "date": "2025/2026",
-    "title": "DBS Foundation Bootcamp",
-    "role": "Fullstack Developer Participant",
-    "description": "Intensif belajar pengembangan web modern dari dasar hingga deployment.",
+  {
+    "date": "Jan 2026 - Mei 2026",
+    "title": "DBS Foundation x Dicoding",
+    "role": "Bootcamp Fullstack Web Developer",
+    "description": "Capstone Project: FinSmartmu, aplikasi pelacak pengeluaran untuk Gen Z.",
     "details": [
-      "Mempelajari MERN Stack (MongoDB, Express, React, Node.js)",
-      "Membangun Project Fullstack sebagai bagian dari Capstone Project",
-      "Fokus pada best practices & clean code"
-    ]
+      "Peran: UI/UX Designer",
+      "Melakukan riset pengguna (User Research)",
+      "Membuat wireframe dan prototipe interaktif menggunakan Figma"
+    ],
+    "type": "certification"
+  },
+  {
+    "date": "Juli 2026 - Sekarang",
+    "title": "Rakitweb",
+    "role": "Magang Frontend Developer",
+    "description": "Bergabung sebagai Frontend Developer Intern.",
+    "details": [
+      "Kontrak sebagai pengembang frontend",
+      "Fokus pada implementasi antarmuka pengguna yang modern",
+      "Kolaborasi dalam tim pengembangan web"
+    ],
+    "type": "work"
   }
 ]

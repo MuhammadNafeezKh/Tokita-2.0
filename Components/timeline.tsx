@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Briefcase, GraduationCap, Calendar, MapPin } from "lucide-react";
+import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
 import timelineData from "../public/data/timeline.json";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,197 +14,196 @@ type TimelineItem = {
   role?: string;
   description: string;
   details?: string[];
-  location?: string;
   type?: "education" | "work" | "certification";
 };
 
 const ExperienceTimeline = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
+  
+  // Ref khusus untuk track yang akan BERGERAK
+  const scrollingTrackRef = useRef<HTMLDivElement>(null);
 
-  // =============================
-  // SCROLL ANIMATION
-  // =============================
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation
+      // 1. Header Animation
       gsap.fromTo(
         headerRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: sectionRef.current, start: "top 85%" } }
+        { opacity: 0, y: 30 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 1, 
+          ease: "power3.out", 
+          scrollTrigger: { 
+            trigger: sectionRef.current, 
+            start: "top 80%" 
+          } 
+        }
       );
 
-      // Timeline items animation
-      itemsRef.current.forEach((el, index) => {
-        if (!el) return;
+      // 2. Horizontal Scroll Logic
+      const track = scrollingTrackRef.current;
+      if (!track || !sectionRef.current) return;
 
-        const isLeft = index % 2 === 0;
-        
-        gsap.fromTo(
-          el,
-          { opacity: 0, x: isLeft ? -50 : 50, y: 30 },
-          {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.7,
-            delay: index * 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
+      // Hitung jarak geser: Lebar Track - Lebar Layar + Padding Akhir
+      const getScrollAmount = () => {
+        return -(track.scrollWidth - window.innerWidth + 100);
+      };
+
+      const tween = gsap.to(track, {
+        x: getScrollAmount,
+        ease: "none",
       });
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top", // Pin saat bagian atas section menyentuh atas layar
+        end: () => `+=${Math.abs(getScrollAmount())}`, // Durasi pin sesuai lebar geser
+        pin: true,       // Section menempel
+        scrub: 1,        // Animasi mengikuti scroll bar
+        animation: tween,// Gerakkan track
+        invalidateOnRefresh: true,
+        anticipatePin: 1 // Mencegah jitter saat mulai pin
+      });
+
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  // Pisahkan data
+  const educationData = timelineData.find(item => item.type === "education") || timelineData[0];
+  const experienceData = timelineData.filter(item => item.type !== "education");
+
   const getTypeIcon = (type?: string) => {
     switch (type) {
-      case "work":
-        return <Briefcase size={16} />;
-      case "education":
-        return <GraduationCap size={16} />;
-      default:
-        return <Calendar size={16} />;
-    }
-  };
-
-  const getTypeColor = (type?: string) => {
-    switch (type) {
-      case "work":
-        return "text-[#6B9FBF] border-[#6B9FBF]/30";
-      case "education":
-        return "text-[#B06C6C] border-[#B06C6C]/30";
-      default:
-        return "text-gray-400 border-gray-500/30";
+      case "work": return <Briefcase size={18} />;
+      case "education": return <GraduationCap size={18} />;
+      default: return <Calendar size={18} />;
     }
   };
 
   return (
+    // PENTING: Jangan pakai overflow-hidden di sini agar pinning GSAP bekerja
     <section
       id="journey"
       ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] overflow-hidden"
+      className="relative w-full bg-[#2A2A2A] min-h-screen flex items-center"
     >
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
+      {/* Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#6B9FBF]/10 via-[#2A2A2A] to-[#2A2A2A] pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        {/* ========== HEADER ========== */}
-        <div ref={headerRef} className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6B9FBF] opacity-60" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6B9FBF]" />
-            </span>
-            <span className="text-[11px] font-mono text-gray-400 tracking-wide">MY JOURNEY</span>
+      {/* HEADER (Fixed di dalam section yang di-pin) */}
+      <div className="absolute top-8 left-0 w-full z-30 px-6 md:px-12 pointer-events-none">
+        <div ref={headerRef} className="max-w-7xl mx-auto flex justify-between items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-3 py-1 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#6B9FBF] animate-pulse" />
+              <span className="text-[10px] font-bold text-gray-300 tracking-widest uppercase">Timeline</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+              Perjalanan <span className="text-[#6B9FBF]">Karir</span>
+            </h2>
           </div>
-
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
-            Education & Experience
-          </h2>
-          <p className="text-gray-400 text-sm max-w-md mx-auto">
-            A timeline of my learning journey and professional growth
-          </p>
-          <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-5 rounded-full" />
-        </div>
-
-        {/* ========== TIMELINE CONTAINER ========== */}
-        <div className="relative">
-          {/* Vertical line - center */}
-          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-px h-full bg-gradient-to-b from-[#6B9FBF]/30 via-[#6B9FBF]/10 to-transparent" />
-
-          {/* Timeline items */}
-          <ul className="flex flex-col gap-16">
-            {(timelineData as TimelineItem[]).map((item, index) => {
-              const isLeft = index % 2 === 0;
-
-              return (
-                <li
-                  key={index}
-                  ref={(el) => {
-                    itemsRef.current[index] = el;
-                  }}
-                  className={`relative flex w-full ${isLeft ? "justify-start" : "justify-end"}`}
-                >
-                  {/* Center dot */}
-                  <div className="absolute left-1/2 top-6 -translate-x-1/2 z-10">
-                    <div className="relative">
-                      <div className="w-3 h-3 rounded-full bg-[#6B9FBF] ring-4 ring-[#2D2D2D] ring-offset-0" />
-                      <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#6B9FBF] animate-ping opacity-40" />
-                    </div>
-                  </div>
-
-                  {/* Card */}
-                  <div className={`w-[calc(100%-3rem)] sm:w-[380px] md:w-[420px] ${isLeft ? "mr-auto pr-8 sm:pr-0" : "ml-auto pl-8 sm:pl-0"}`}>
-                    <div className="group bg-[#2D2D2D] border border-white/10 rounded-2xl p-5 hover:border-[#6B9FBF]/30 hover:shadow-xl transition-all duration-300">
-                      {/* Date badge */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <Calendar size={12} className="text-[#6B9FBF]" />
-                        <time className="text-[11px] font-mono text-gray-400 tracking-wide">
-                          {item.date}
-                        </time>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-lg font-semibold text-white tracking-tight mb-1">
-                        {item.title}
-                      </h3>
-
-                      {/* Role */}
-                      {item.role && (
-                        <div className="flex items-center gap-1.5 mb-3">
-                          {getTypeIcon(item.type)}
-                          <p className="text-xs font-medium text-[#6B9FBF]">
-                            {item.role}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Description */}
-                      <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                        {item.description}
-                      </p>
-
-                      {/* Details list */}
-                      {item.details && item.details.length > 0 && (
-                        <ul className="space-y-2 pt-2 border-t border-white/5">
-                          {item.details.map((detail, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <span className="mt-1.5 w-1 h-1 rounded-full bg-[#6B9FBF] flex-shrink-0" />
-                              <span className="text-xs text-gray-500 leading-relaxed">
-                                {detail}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* End of timeline indicator */}
-        <div className="flex justify-center mt-12">
-          <div className="flex items-center gap-2 text-[11px] text-gray-600">
-            <span className="w-16 h-px bg-gradient-to-r from-transparent to-gray-700" />
-            <span>CONTINUOUS GROWTH</span>
-            <span className="w-16 h-px bg-gradient-to-l from-transparent to-gray-700" />
-          </div>
+          <p className="hidden md:block text-xs text-gray-500 font-mono">SCROLL TO EXPLORE →</p>
         </div>
       </div>
 
-      {/* GARIS PEMISAH - OMORI style di bagian bawah */}
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]"></div>
+      {/* CONTAINER UTAMA */}
+      <div className="relative w-full h-screen flex items-center pl-6 md:pl-12">
+        
+        {/* 1. KARTU PENDIDIKAN (STICKY / DIAM) */}
+        {/* Posisi absolute terhadap section, jadi TIDAK ikut bergeser */}
+        <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 z-20 w-[280px] md:w-[380px]">
+          <div className="bg-[#2D2D2D]/90 backdrop-blur-xl border border-[#6B9FBF]/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
+            {/* Glow Effect */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#6B9FBF]/20 blur-3xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-[#6B9FBF]/30" />
+            
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-[#6B9FBF]/10 rounded-lg text-[#6B9FBF]">
+                <GraduationCap size={20} />
+              </div>
+              <span className="text-xs font-bold text-[#6B9FBF] uppercase tracking-wider">Foundation</span>
+            </div>
+
+            <h3 className="text-2xl font-bold text-white mb-1">{educationData.title}</h3>
+            <p className="text-sm text-gray-400 mb-4 font-medium">{educationData.role}</p>
+            
+            <p className="text-sm text-gray-300 leading-relaxed mb-6 border-l-2 border-[#6B9FBF]/30 pl-3">
+              {educationData.description}
+            </p>
+
+            <ul className="space-y-2">
+              {educationData.details?.map((detail, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
+                  <span className="mt-1.5 w-1 h-1 rounded-full bg-[#6B9FBF] flex-shrink-0" />
+                  {detail}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* 2. TRACK EXPERIENCE (BERGERAK HORIZONTAL) */}
+        {/* Hanya elemen ini yang akan digeser oleh GSAP */}
+        <div
+          ref={scrollingTrackRef}
+          // Padding kiri besar agar kartu pertama muncul setelah kartu pendidikan
+          className="flex items-center gap-6 h-full w-max pl-[320px] md:pl-[440px] pr-[50vw]"
+        >
+          {experienceData.map((item, index) => (
+            <div
+              key={index}
+              className="w-[300px] md:w-[340px] h-[420px] flex-shrink-0 list-none"
+            >
+              <div className="h-full bg-[#252525] border border-white/5 rounded-3xl p-6 hover:border-[#6B9FBF]/20 hover:bg-[#2A2A2A] transition-all duration-300 flex flex-col group relative">
+                
+                {/* Garis konektor visual */}
+                <div className="absolute left-0 top-1/2 -translate-x-full h-px w-6 bg-white/10 hidden md:block" />
+
+                <div className="flex justify-between items-start mb-6">
+                  <div className="p-2.5 bg-white/5 rounded-xl text-gray-300 group-hover:text-[#6B9FBF] group-hover:bg-[#6B9FBF]/10 transition-colors">
+                    {getTypeIcon(item.type)}
+                  </div>
+                  <span className="text-[10px] font-mono text-gray-500 bg-white/5 px-2 py-1 rounded-md">
+                    {item.date}
+                  </span>
+                </div>
+
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white mb-1 group-hover:translate-x-1 transition-transform">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-[#6B9FBF] font-medium mb-4">{item.role}</p>
+                  <p className="text-sm text-gray-400 leading-relaxed mb-6 line-clamp-3">
+                    {item.description}
+                  </p>
+
+                  <div className="space-y-2">
+                    {item.details?.slice(0, 3).map((detail, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
+                        <ArrowRight size={10} className="text-[#6B9FBF] flex-shrink-0" />
+                        <span className="truncate">{detail.replace(/^(Project|Tech Stack|Fokus|Peran|Keahlian):/, '')}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[10px] text-gray-600 uppercase tracking-widest">Detail</span>
+                  <div className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#6B9FBF] group-hover:bg-[#6B9FBF] transition-all">
+                    <ArrowRight size={12} className="text-gray-500 group-hover:text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* OMORI Divider */}
+      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0] opacity-80 z-30" />
     </section>
   );
 };
