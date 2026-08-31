@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link as ScrollLink } from "react-scroll";
 import Link from "next/link";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X, BookOpen, FolderLock } from "lucide-react"; // Tambah icon FolderLock untuk vibe arsip
 import { gsap } from "gsap";
 
 interface MenuItem {
@@ -11,6 +11,7 @@ interface MenuItem {
   to: string;
   isPage?: boolean;
   href?: string;
+  isHighlight?: boolean; // Properti baru untuk highlight
 }
 
 const Navbar: React.FC = () => {
@@ -19,13 +20,20 @@ const Navbar: React.FC = () => {
   const navRef = useRef<HTMLElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // Hanya menu yang sesuai dengan section di homepage
+  // Menu Items
   const menuItems: MenuItem[] = [
-    { name: "Education", to: "education" },      // Sesuai dengan id="education"
+    { name: "Education", to: "education" },
     { name: "Skills", to: "skills" },
     { name: "Projects", to: "projects" },
     { name: "Contact", to: "contact" },
-    { name: "Blog", to: "blog", isPage: true, href: "/blog" },
+    // Highlighted Item
+    { 
+      name: "ARCHIVES", 
+      to: "blog", 
+      isPage: true, 
+      href: "/blog", 
+      isHighlight: true 
+    },
   ];
 
   // Entrance animation
@@ -39,7 +47,7 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
-  // Scroll detection untuk efek blur/background
+  // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -48,7 +56,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Animasi mobile menu
+  // Mobile menu animation
   useEffect(() => {
     if (mobileMenuRef.current) {
       if (isOpen) {
@@ -83,14 +91,12 @@ const Navbar: React.FC = () => {
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-sm"
-          : "bg-white/80 backdrop-blur-sm"
-      }`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-none`}
     >
-      <div className="mx-auto flex h-12 max-w-fit items-center justify-center gap-2 px-4 sm:px-6 mt-3 rounded-full shadow-md border border-gray-200 bg-white/95">
-        {/* Logo - scroll ke hero */}
+      {/* Container dengan pointer-events-auto agar bisa diklik */}
+      <div className="mx-auto flex h-12 max-w-fit items-center justify-center gap-2 px-4 sm:px-6 mt-3 rounded-full shadow-md border border-gray-200 bg-white/90 backdrop-blur-md pointer-events-auto">
+        
+        {/* Logo */}
         <ScrollLink
           to="hero"
           smooth
@@ -117,10 +123,10 @@ const Navbar: React.FC = () => {
           <span className="font-semibold">Nafeez</span>
         </ScrollLink>
 
-        {/* Separator line */}
+        {/* Separator */}
         <div className="w-px h-5 bg-gray-300 mx-1"></div>
 
-        {/* Desktop Menu - di tengah */}
+        {/* Desktop Menu */}
         <div className="hidden md:block">
           <nav aria-label="Global">
             <ul className="flex items-center justify-center gap-1 text-sm">
@@ -129,10 +135,18 @@ const Navbar: React.FC = () => {
                   <li key={item.to}>
                     <Link
                       href={item.href || "#"}
-                      className="flex items-center gap-1 px-2 py-1.5 text-gray-600 transition hover:text-sky-500 rounded-lg hover:bg-gray-50"
+                      className={`
+                        flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 font-medium
+                        ${item.isHighlight 
+                          ? "bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-100 hover:border-sky-300 hover:shadow-sm" 
+                          : "text-gray-600 hover:text-sky-500 hover:bg-gray-50"
+                        }
+                      `}
                     >
-                      {item.name === "Blog" && (
-                        <BookOpen size={14} className="text-sky-500" />
+                      {item.isHighlight ? (
+                        <FolderLock size={14} className="text-sky-500" />
+                      ) : (
+                        item.name === "ARCHIVES" && <BookOpen size={14} className="text-sky-500" />
                       )}
                       {item.name}
                     </Link>
@@ -157,19 +171,19 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Separator line */}
+        {/* Separator */}
         <div className="hidden md:block w-px h-5 bg-gray-300 mx-1"></div>
 
-        {/* Kanan: Avatar */}
+        {/* Avatar / Profile Trigger */}
         <div className="hidden md:flex items-center gap-3">
-          <div className="shrink-0">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+          <div className="shrink-0 cursor-pointer group">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm group-hover:shadow-sky-200 transition-all">
               N
             </div>
           </div>
         </div>
 
-        {/* Tombol mobile */}
+        {/* Mobile Toggle Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="block md:hidden rounded-full bg-gray-100 p-1.5 text-gray-600 transition hover:bg-gray-200"
@@ -179,23 +193,31 @@ const Navbar: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div
           ref={mobileMenuRef}
-          className="md:hidden absolute top-14 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-lg z-40"
+          className="md:hidden absolute top-16 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl z-40 overflow-hidden"
         >
-          <div className="flex flex-col space-y-1 px-4 py-3">
+          <div className="flex flex-col space-y-1 px-4 py-4">
             {menuItems.map((item) =>
               item.isPage ? (
                 <Link
                   key={item.to}
                   href={item.href || "#"}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-sky-500 hover:bg-gray-50 rounded-lg transition"
+                  className={`
+                    flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium
+                    ${item.isHighlight
+                      ? "bg-sky-50 text-sky-600 border border-sky-100"
+                      : "text-gray-700 hover:text-sky-500 hover:bg-gray-50"
+                    }
+                  `}
                 >
-                  {item.name === "Blog" && (
-                    <BookOpen size={16} className="text-sky-500" />
+                  {item.isHighlight ? (
+                    <FolderLock size={18} className="text-sky-500" />
+                  ) : (
+                    item.name === "ARCHIVES" && <BookOpen size={18} className="text-sky-500" />
                   )}
                   {item.name}
                 </Link>
@@ -208,8 +230,9 @@ const Navbar: React.FC = () => {
                   spy
                   offset={-80}
                   onClick={() => setIsOpen(false)}
-                  className="px-3 py-2 text-gray-700 hover:text-sky-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
+                  className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:text-sky-500 hover:bg-gray-50 rounded-xl transition cursor-pointer"
                 >
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
                   {item.name}
                 </ScrollLink>
               )

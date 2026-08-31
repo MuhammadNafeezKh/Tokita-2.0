@@ -17,11 +17,11 @@ import {
   Instagram,
   Linkedin,
   Mail,
-  Heart,
   Calendar,
   Building2,
   FileText,
   Sparkles,
+  ChevronRight
 } from "lucide-react";
 
 import certificatesData from "../../public/data/serti.json";
@@ -105,21 +105,26 @@ const Alert = ({ message, onClose }: { message: string; onClose: () => void }) =
 // ============================================================================
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  // Updated links to match your profile
   const socialLinks = [
-    { icon: Github, href: "https://github.com/MuhammadNafeezKh", label: "GitHub" },
+    { icon: Github, href: "https://github.com/Tokitakun", label: "GitHub" },
     { icon: Instagram, href: "https://www.instagram.com/_nafietzsche/", label: "Instagram" },
     { icon: Linkedin, href: "https://www.linkedin.com/in/muhammad-dzurunnafis-khairuddin/", label: "LinkedIn" },
     { icon: Mail, href: "mailto:nafismuhammad277@gmail.com", label: "Email" },
   ];
 
   return (
-    <footer className="border-t border-white/5 bg-[#2A2A2A]/80 backdrop-blur-sm relative">
-      <div className="max-w-6xl mx-auto px-6 py-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-gray-500">
-            © {currentYear} Muhammad Nafis. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
+    <footer className="border-t border-white/5 bg-[#2A2A2A] relative z-10">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+             <span className="w-2 h-2 rounded-full bg-[#6B9FBF]"></span>
+             <p className="text-sm text-gray-400">
+              © {currentYear} <span className="text-white font-medium">Muhammad Nafis</span>.
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-6">
             {socialLinks.map((social, index) => {
               const Icon = social.icon;
               return (
@@ -128,17 +133,14 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-[#6B9FBF] transition-colors"
+                  className="text-gray-500 hover:text-[#6B9FBF] transition-colors transform hover:-translate-y-0.5"
                   aria-label={social.label}
                 >
-                  <Icon size={14} />
+                  <Icon size={18} />
                 </a>
               );
             })}
           </div>
-          <p className="text-[10px] text-gray-600 font-mono">
-            Next.js • Tailwind • GSAP
-          </p>
         </div>
       </div>
     </footer>
@@ -163,7 +165,8 @@ export default function CertificatesPage() {
   useEffect(() => {
     const loadCertificates = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Simulate slight delay for smooth entrance
+        await new Promise((resolve) => setTimeout(resolve, 500));
         setCertificates(certificatesData as CertificatesJSON);
       } catch (error) {
         console.error("Failed to load certificates:", error);
@@ -180,28 +183,37 @@ export default function CertificatesPage() {
     if (loading || !certificates) return;
 
     const ctx = gsap.context(() => {
+      // Header Stagger
       gsap.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }
+        ".header-element",
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 0.8, 
+          stagger: 0.1, 
+          ease: "power3.out" 
+        }
       );
 
+      // Tabs Slide In
       gsap.fromTo(
         tabsRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, delay: 0.2, ease: "power2.out" }
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.6, delay: 0.4, ease: "power2.out" }
       );
 
+      // Cards Stagger
       gsap.fromTo(
         cardsRef.current.filter(Boolean),
-        { opacity: 0, y: 40 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
           duration: 0.6,
           stagger: 0.08,
-          ease: "power3.out",
-          delay: 0.3,
+          ease: "back.out(1.2)",
+          delay: 0.5,
         }
       );
     }, pageRef);
@@ -225,13 +237,9 @@ export default function CertificatesPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#2A2A2A] flex items-center justify-center">
-        <div className="text-center">
-          <div className="flex gap-2 justify-center mb-4">
-            <span className="w-2 h-2 rounded-full bg-[#6B9FBF] animate-pulse" />
-            <span className="w-2 h-2 rounded-full bg-[#6B9FBF] animate-pulse [animation-delay:0.2s]" />
-            <span className="w-2 h-2 rounded-full bg-[#6B9FBF] animate-pulse [animation-delay:0.4s]" />
-          </div>
-          <p className="text-gray-400 text-sm">Loading certificates...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-2 border-[#6B9FBF]/30 border-t-[#6B9FBF] rounded-full animate-spin" />
+          <p className="text-gray-500 text-sm font-mono animate-pulse">Loading Achievements...</p>
         </div>
       </div>
     );
@@ -246,9 +254,9 @@ export default function CertificatesPage() {
           <Link
             href="/"
             onClick={handleBackToHome}
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            className="text-sm text-[#6B9FBF] hover:text-white transition-colors inline-flex items-center gap-1"
           >
-            ← Back to Home
+            <ArrowLeft size={14} /> Back to Home
           </Link>
         </div>
       </div>
@@ -256,179 +264,183 @@ export default function CertificatesPage() {
   }
 
   const currentData = certificates[activeTab];
-  const Icon = activeTab === "kompetensi" ? Award : Trophy;
 
   return (
     <>
-      <div ref={pageRef} className="min-h-screen bg-[#2A2A2A] relative overflow-hidden">
-        {/* Decorative Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#6B9FBF]/[0.02] to-transparent pointer-events-none" />
-        <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-[#6B9FBF]/5 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-[#F08B8B]/5 blur-3xl pointer-events-none" />
+      <div ref={pageRef} className="min-h-screen bg-[#2A2A2A] relative overflow-hidden flex flex-col">
+        {/* Subtle Background Noise/Gradient */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
+        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#6B9FBF]/5 to-transparent pointer-events-none" />
         
-        {/* Top decorative line */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]" />
-
-        {/* Content */}
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
-          {/* Header */}
-          <div ref={headerRef} className="mb-10">
+        {/* Content Container */}
+        <main className="flex-grow max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16 w-full">
+          
+          {/* Header Section - Asymmetrical Layout */}
+          <div ref={headerRef} className="mb-12 md:mb-16">
             <Link
               href="/"
               onClick={handleBackToHome}
-              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mb-6 group"
+              className="header-element inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#6B9FBF] transition-colors mb-8 group"
             >
-              <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-              Back to Home
+              <div className="p-1.5 rounded-full bg-white/5 group-hover:bg-[#6B9FBF]/10 transition-colors">
+                <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+              </div>
+              <span>Back to Home</span>
             </Link>
 
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-5">
-                <Sparkles size={12} className="text-[#6B9FBF]" />
-                <span className="text-[11px] font-mono text-gray-400 tracking-wide">MY ACHIEVEMENTS</span>
-                <Sparkles size={12} className="text-[#F08B8B]" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-4 max-w-2xl">
+                <div className="header-element inline-flex items-center gap-2 text-[#6B9FBF] mb-2">
+                  <Sparkles size={16} />
+                  <span className="text-xs font-bold tracking-wider uppercase">Portfolio Validation</span>
+                </div>
+                <h1 className="header-element text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.1]">
+                  Certificates & <br/>
+                  <span className="text-gray-500">Achievements</span>
+                </h1>
+                <p className="header-element text-gray-400 text-base md:text-lg leading-relaxed max-w-md">
+                  Dokumentasi profesional dan penghargaan yang telah saya raih selama perjalanan karir di dunia teknologi.
+                </p>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
-                Certificates & Achievements
-              </h1>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">
-                A collection of my professional certifications and competition awards
-              </p>
-              <div className="w-12 h-0.5 bg-gradient-to-r from-[#6B9FBF] to-transparent mx-auto mt-5 rounded-full" />
+
+              {/* Stats Badge */}
+              <div className="header-element hidden md:block">
+                 <div className="bg-[#2D2D2D] border border-white/10 rounded-2xl p-4 text-right min-w-[140px]">
+                    <span className="block text-3xl font-bold text-white">{currentData.length}</span>
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">Total Items</span>
+                 </div>
+              </div>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div ref={tabsRef} className="flex justify-center gap-2 mb-10">
-            <button
-              onClick={() => setActiveTab("kompetensi")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                activeTab === "kompetensi"
-                  ? "bg-white/10 border border-white/20 text-white shadow-lg"
-                  : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
-              }`}
-            >
-              <Award size={14} />
-              Certifications
-            </button>
-            <button
-              onClick={() => setActiveTab("prestasi")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                activeTab === "prestasi"
-                  ? "bg-white/10 border border-white/20 text-white shadow-lg"
-                  : "bg-transparent border border-white/5 text-gray-400 hover:bg-white/5 hover:text-gray-200"
-              }`}
-            >
-              <Trophy size={14} />
-              Achievements
-            </button>
-          </div>
-
-          {/* Counter Badge */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-[#2D2D2D] border border-white/10 rounded-full px-4 py-1.5">
-              <span className="text-xs text-gray-400">
-                Showing <span className="text-[#6B9FBF] font-semibold">{currentData.length}</span> {activeTab === "kompetensi" ? "certifications" : "achievements"}
-              </span>
+          {/* Tabs & Filter */}
+          <div ref={tabsRef} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10 border-b border-white/5 pb-6">
+            <div className="flex gap-2 bg-[#252525] p-1 rounded-xl">
+              <button
+                onClick={() => setActiveTab("kompetensi")}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  activeTab === "kompetensi"
+                    ? "bg-[#2D2D2D] text-white shadow-sm border border-white/5"
+                    : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                }`}
+              >
+                <Award size={16} className={activeTab === "kompetensi" ? "text-[#6B9FBF]" : ""} />
+                Certifications
+              </button>
+              <button
+                onClick={() => setActiveTab("prestasi")}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  activeTab === "prestasi"
+                    ? "bg-[#2D2D2D] text-white shadow-sm border border-white/5"
+                    : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                }`}
+              >
+                <Trophy size={16} className={activeTab === "prestasi" ? "text-[#F08B8B]" : ""} />
+                Achievements
+              </button>
+            </div>
+            
+            <div className="text-xs text-gray-500 font-mono">
+               Showing {activeTab === "kompetensi" ? "Professional Certs" : "Competition Awards"}
             </div>
           </div>
 
           {/* Certificates Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {currentData.map((cert, index) => (
               <div
                 key={cert.id}
                 ref={(el) => {
                   cardsRef.current[index] = el;
                 }}
-                className="group bg-[#2D2D2D] border border-white/10 rounded-2xl overflow-hidden hover:border-[#6B9FBF]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className="group relative bg-[#2D2D2D] border border-white/5 rounded-2xl overflow-hidden hover:border-[#6B9FBF]/30 hover:shadow-2xl hover:shadow-[#6B9FBF]/5 transition-all duration-500 flex flex-col"
               >
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden bg-[#232323]">
+                {/* Image Area */}
+                <div className="relative h-52 overflow-hidden bg-[#232323]">
                   <Image
                     src={cert.image}
                     alt={cert.title}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D2D2D] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Overlay Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D2D2D] via-transparent to-transparent opacity-60" />
 
-                  {/* Date badge */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#2A2A2A]/80 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10">
-                    <Calendar size={10} className="text-gray-400" />
-                    <span className="text-[10px] font-mono text-gray-300">{cert.date}</span>
-                  </div>
-
-                  {/* Type badge overlay on hover */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-                    <div className="bg-[#2D2D2D]/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20">
-                      <span className="text-xs font-medium text-white">Click to view</span>
-                    </div>
+                  {/* Date Badge */}
+                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/60 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/10">
+                    <Calendar size={10} className="text-gray-300" />
+                    <span className="text-[10px] font-medium text-white">{cert.date}</span>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5">
-                  <div className="flex items-start gap-2 mb-2">
-                    <Building2 size={14} className="text-[#6B9FBF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[11px] font-mono text-gray-400 uppercase tracking-wider">
+                {/* Content Area */}
+                <div className="p-5 flex flex-col flex-grow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Building2 size={12} className="text-[#6B9FBF]" />
+                    <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
                       {cert.issuer}
                     </span>
                   </div>
 
-                  <h3 className="font-semibold text-white text-base leading-tight mb-2 line-clamp-2">
+                  <h3 className="font-bold text-white text-lg leading-snug mb-2 group-hover:text-[#6B9FBF] transition-colors">
                     {cert.title}
                   </h3>
 
                   {cert.description && (
-                    <p className="text-gray-400 text-xs leading-relaxed mb-4 line-clamp-2">
+                    <p className="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-2 flex-grow">
                       {cert.description}
                     </p>
                   )}
 
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-3 border-t border-white/10">
-                    <button
-                      onClick={() => handleAction(cert, "view")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white hover:border-[#6B9FBF]/30 transition-all"
-                    >
-                      <ExternalLink size={12} />
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleAction(cert, "download")}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white hover:border-[#F08B8B]/30 transition-all"
-                    >
-                      <Download size={12} />
-                      Save
-                    </button>
+                  {/* Action Buttons */}
+                  <div className="pt-4 border-t border-white/5 mt-auto">
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleAction(cert, "view")}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-white bg-white/5 hover:bg-[#6B9FBF] hover:border-[#6B9FBF] border border-white/10 rounded-xl transition-all duration-300 group/btn"
+                      >
+                        <ExternalLink size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                        View Proof
+                      </button>
+                      
+                      {cert.link && (
+                         <a
+                           href={cert.link}
+                           download
+                           className="flex items-center justify-center p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                           title="Download"
+                         >
+                           <Download size={14} />
+                         </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Empty State with animation */}
+          {/* Empty State */}
           {currentData.length === 0 && (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 border border-white/10 mb-4 animate-pulse">
-                <FileText size={28} className="text-gray-500" />
+            <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                <FileText size={24} className="text-gray-500" />
               </div>
-              <p className="text-white font-medium mb-1">No {activeTab} found</p>
-              <p className="text-gray-500 text-sm">Check back later for updates</p>
+              <p className="text-white font-medium mb-1">No data found</p>
+              <p className="text-gray-500 text-sm">This category is currently empty.</p>
             </div>
           )}
-        </div>
+        </main>
 
-        {/* Bottom decorative line - OMORI style */}
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0]" />
+        {/* OMORI Divider */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0] opacity-80" />
+        
+        <Footer />
       </div>
 
-      {/* Footer */}
-      <Footer />
-
-      {/* Alert */}
+      {/* Alert Portal */}
       {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage(null)} />}
     </>
   );

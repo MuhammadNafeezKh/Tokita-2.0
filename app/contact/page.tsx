@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React, { useState } from 'react';
 import { 
   Mail, 
   Github, 
@@ -11,49 +9,16 @@ import {
   Copy, 
   Check, 
   ArrowUpRight, 
-  MapPin, 
-  Clock,
-  TerminalSquare
-} from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
+  MessageCircle,
+  QrCode,
+  ExternalLink
+} from 'lucide-react';
 
 const ContactSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
-
-  const contactLinks = [
-    {
-      icon: Github,
-      label: "GitHub",
-      value: "@TokitaKun",
-      url: "https://github.com/Tokitakun",
-      color: "text-white"
-    },
-    {
-      icon: Linkedin,
-      label: "LinkedIn",
-      value: "Muhammad Nafis",
-      url: "https://www.linkedin.com/in/muhammad-dzurunnafis-khairuddin/",
-      color: "text-[#0A66C2]"
-    },
-    {
-      icon: Instagram,
-      label: "Instagram",
-      value: "@_nafietzsche",
-      url: "https://www.instagram.com/_nafietzsche/",
-      color: "text-[#E1306C]"
-    },
-    {
-      icon: TerminalSquare,
-      label: "WhatsApp",
-      value: "+62 856-1470-816",
-      url: "https://wa.me/628561470816",
-      color: "text-[#25D366]"
-    },
-  ];
+  
+  // Link Tree yang mengarah ke GitHub
+  const embedUrl = "https://tree.icqr.com/s/MDNodHRwczovL2dpdGh1Yi5jb20vVG9raXRha3Vu";
 
   // Handle copy email
   const handleCopyEmail = async () => {
@@ -66,137 +31,146 @@ const ContactSection = () => {
     }
   };
 
-  // GSAP Animations
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header Animation
-      gsap.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 30 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 0.8, 
-          ease: "power3.out", 
-          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" } 
-        }
-      );
-
-      // List Items Stagger
-      if (listRef.current) {
-        const items = gsap.utils.toArray(".contact-row") as HTMLElement[];
-        gsap.fromTo(
-          items,
-          { opacity: 0, x: -20 },
-          { 
-            opacity: 1, 
-            x: 0, 
-            duration: 0.5, 
-            stagger: 0.1, 
-            ease: "power2.out",
-            scrollTrigger: { trigger: listRef.current, start: "top 85%" }
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      id="contact"
-      ref={sectionRef}
-      className="relative py-24 px-4 md:px-8 bg-[#2A2A2A] min-h-screen flex items-center justify-center"
-    >
-      {/* Background Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
-      <div className="relative z-10 max-w-3xl mx-auto w-full">
-        
-        {/* HEADER MINIMALIS */}
-        <div ref={headerRef} className="mb-12 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 mb-4 text-[#6B9FBF]">
-            <Mail size={16} />
-            <span className="text-xs font-mono tracking-widest uppercase">Contact Protocol</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">
-            Let's Start a <span className="text-gray-500">Conversation</span>
-          </h2>
-          <p className="text-sm text-gray-400 max-w-md leading-relaxed">
-            Terbuka untuk kolaborasi proyek, freelance, atau sekadar diskusi teknologi. Jangan ragu untuk menghubungi saya melalui kanal di bawah ini.
-          </p>
-        </div>
-
-        {/* MAIN CONTACT CARD */}
-        <div className="bg-[#2D2D2D]/50 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+    <section id="contact" className="bg-[#2A2A2A] py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
           
-          {/* Email Hero Section */}
-          <div className="p-6 md:p-8 border-b border-white/5 bg-white/[0.02]">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Primary Email</p>
-                <p className="text-lg md:text-xl font-medium text-white font-mono break-all">
-                  nafismuhammad277@gmail.com
-                </p>
+          {/* Bagian Kiri: Kontak & Info */}
+          <div className="space-y-6 md:space-y-8 order-2 md:order-1">
+            <div>
+              <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-[#6B9FBF]/10 text-[#6B9FBF] text-xs font-bold uppercase tracking-wider mb-4 border border-[#6B9FBF]/20">
+                <Mail size={12} />
+                Get in Touch
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4 md:mb-6">
+                Let's Start a <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6B9FBF] to-emerald-400">
+                  Conversation
+                </span>
+              </h2>
+              
+              <p className="text-base md:text-lg text-gray-400 leading-relaxed mb-6 md:mb-8">
+                Terbuka untuk kolaborasi proyek, freelance, atau sekadar diskusi teknologi. Jangan ragu untuk menghubungi saya melalui kanal di bawah ini.
+              </p>
+
+              {/* Email Box */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="break-all">
+                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Primary Email</p>
+                  <p className="text-sm md:text-base font-medium text-white font-mono">
+                    nafismuhammad277@gmail.com
+                  </p>
+                </div>
+                <button
+                  onClick={handleCopyEmail}
+                  className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#6B9FBF] hover:bg-[#5a8fae] text-white text-xs font-bold rounded-lg transition-all active:scale-95 w-full sm:w-auto"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  {copied ? "Copied!" : "Copy Address"}
+                </button>
               </div>
-              <button
-                onClick={handleCopyEmail}
-                className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-[#6B9FBF] hover:bg-[#5a8fae] text-white text-sm font-medium rounded-lg transition-all active:scale-95"
-              >
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? "Copied" : "Copy Address"}
-              </button>
+
+              {/* Social Links List */}
+              <div className="space-y-3">
+                {[
+                  { icon: Github, label: "GitHub", value: "@Tokitakun", url: "https://github.com/Tokitakun" },
+                  { icon: Linkedin, label: "LinkedIn", value: "Muhammad Nafis", url: "https://www.linkedin.com/in/muhammad-dzurunnafis-khairuddin/" },
+                  { icon: Instagram, label: "Instagram", value: "@_nafietzsche", url: "https://www.instagram.com/_nafietzsche/" },
+                  { icon: MessageCircle, label: "WhatsApp", value: "+62 856-1470-816", url: "https://wa.me/628561470816" },
+                ].map((item, idx) => (
+                  <a
+                    key={idx}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 rounded-md bg-white/5 text-gray-300 group-hover:text-[#6B9FBF] group-hover:bg-[#6B9FBF]/10 transition-colors">
+                        <item.icon size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white group-hover:text-[#6B9FBF] transition-colors">
+                          {item.label}
+                        </p>
+                        <p className="text-xs text-gray-500 font-mono">{item.value}</p>
+                      </div>
+                    </div>
+                    <ArrowUpRight size={16} className="text-gray-600 group-hover:text-white transition-colors" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Social Links List */}
-          <div ref={listRef} className="divide-y divide-white/5">
-            {contactLinks.map((item, idx) => (
-              <a
-                key={idx}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-row group flex items-center justify-between p-5 hover:bg-white/[0.03] transition-colors duration-200"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors ${item.color}`}>
-                    <item.icon size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-white group-hover:text-[#6B9FBF] transition-colors">
-                      {item.label}
-                    </p>
-                    <p className="text-xs text-gray-500 font-mono">{item.value}</p>
-                  </div>
+          {/* Bagian Kanan: Iframe Window (Digital Identity) */}
+          {/* Hidden on mobile for performance, shown on md+ */}
+          <div className="relative order-1 md:order-2 hidden md:block">
+            {/* Decorative Blur Behind */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-[#6B9FBF] to-emerald-500 rounded-2xl opacity-20 blur-2xl -z-10"></div>
+
+            <div className="relative bg-[#1a1a1a] rounded-2xl p-2 shadow-2xl ring-1 ring-white/10 overflow-hidden">
+              
+              {/* Browser Header Mini */}
+              <div className="bg-[#252525] px-4 py-2.5 flex items-center justify-between rounded-t-xl border-b border-white/5">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                 </div>
-                
-                <ArrowUpRight 
-                  size={18} 
-                  className="text-gray-600 group-hover:text-white group-hover:-rotate-45 transition-all duration-300" 
-                />
-              </a>
-            ))}
-          </div>
-        </div>
+                <div className="text-[10px] text-gray-400 font-mono bg-black/30 px-3 py-1 rounded border border-white/5 flex items-center gap-2">
+                  <QrCode size={10} />
+                  github.com/Tokitakun
+                </div>
+                <div className="w-8"></div>
+              </div>
 
-        {/* FOOTER META INFO */}
-        <div className="mt-12 flex flex-wrap justify-center md:justify-start gap-6 text-xs text-gray-500 font-mono">
-          <div className="flex items-center gap-2">
-            <MapPin size={12} className="text-[#6B9FBF]" />
-            <span>Indonesia (WIB)</span>
+              {/* Iframe Area with Scaling */}
+              <div className="relative w-full h-[400px] lg:h-[500px] bg-[#2A2A2A] rounded-b-xl overflow-hidden flex items-start justify-center">
+                <div 
+                  className="origin-top transition-transform duration-300"
+                  style={{ 
+                    width: '1280px', 
+                    height: '800px', 
+                    transform: 'scale(0.6)' 
+                  }}
+                >
+                  <iframe 
+                    src={embedUrl}
+                    title="Nafis Digital Tree Desktop"
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Clock size={12} className="text-[#6B9FBF]" />
-            <span>Response Time: ~24h</span>
-          </div>
-        </div>
 
+          {/* Mobile Alternative: Simple Card with Link */}
+          <div className="block md:hidden order-1">
+             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center space-y-4">
+                <div className="w-12 h-12 bg-[#6B9FBF]/20 rounded-full flex items-center justify-center mx-auto text-[#6B9FBF]">
+                  <QrCode size={24} />
+                </div>
+                <h3 className="text-white font-bold">Digital Portfolio</h3>
+                <p className="text-sm text-gray-400">
+                  Lihat portofolio lengkap dan koneksi GitHub saya melalui tautan di bawah ini.
+                </p>
+                <a 
+                  href={embedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
+                >
+                  Open Portfolio Tree
+                  <ExternalLink size={16} />
+                </a>
+             </div>
+          </div>
+
+        </div>
       </div>
-
-      {/* OMORI Divider */}
-      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#8FC5F0] via-[#F08B8B] to-[#8FC5F0] opacity-80"></div>
     </section>
   );
 };
